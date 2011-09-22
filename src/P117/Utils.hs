@@ -20,6 +20,7 @@ htmlWrapper content = do
             H.link ! A.rel "stylesheet" ! A.type_ "text/css" ! A.href "/static/css/smoothness/jquery-ui-1.8.16.custom.css"
             H.script ! A.type_ "text/javascript" ! A.src "/static/js/jquery-1.6.2.min.js" $ ""
             H.script ! A.type_ "text/javascript" ! A.src "/static/js/jquery-ui-1.8.16.custom.min.js" $ ""
+            H.script ! A.type_ "text/javascript" ! A.src "/static/js/p117.js" $ ""
             -- H.link ! A.href "/static/css/p117.css" ! A.rel "stylesheet" ! A.type_ "text/css" ! A.title "p117"
         content
 
