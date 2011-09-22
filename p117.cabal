@@ -1,0 +1,25 @@
+Name:           p117
+Version:        1.0
+Cabal-Version:  >= 1.4
+Author:         Evgeny Tarasov
+Build-type:     Simple
+Copyright:      2011 Evgeny Tarasov
+License:        GPL
+Maintainer:     etarasov.ekb@gmail.com
+Stability:      Experimental
+Synopsis:       Simle knowledge similar to mindmaps
+Category:       Application
+
+Executable p117
+    Build-Depends:  base >=4 && <5,
+                    happstack-server >=6.2 && <6.3,
+                    happstack-state >= 6.1 && <6.2,
+                    happstack-util >= 6 && < 6.1,
+                    mtl >= 1.1,
+                    safe >= 0.3,
+                    network >= 2.2 && < 3,
+                    hsyslog >= 1.4 && < 2
+    Main-Is:        Main.hs
+    Other-modules:  P117.Utils
+    Hs-Source-Dirs: src
+    Ghc-Options:    -threaded -Wall -fno-warn-unused-do-bind
