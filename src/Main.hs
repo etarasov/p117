@@ -5,6 +5,7 @@ import Control.Concurrent (forkIO, killThread)
 import Control.Exception
 import Control.Monad.Error
 import Data.Monoid
+import Happstack.Server.FileServe
 import Happstack.Server.Internal.Monads
 import Happstack.Server.SimpleHTTP
 import Happstack.State.Control
@@ -40,5 +41,6 @@ unpackErrorT handler = do
         Right x -> return x
 
 control :: ServerPartT (ErrorT String IO) Response
-control = do
-    return $ buildResponse "ok"
+control = msum [ dir "static" $ serveDirectory EnableBrowsing [] "static"
+               , return $ buildResponse "ok"
+               ]
