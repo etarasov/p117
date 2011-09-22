@@ -21,6 +21,7 @@ Executable p117
                     hsyslog >= 1.4 && < 2,
                     blaze-html >= 0.4 && < 0.5
     Main-Is:        Main.hs
-    Other-modules:  P117.Utils
+    Other-modules:  P117.MainPage
+                    P117.Utils
     Hs-Source-Dirs: src
     Ghc-Options:    -threaded -Wall -fno-warn-unused-do-bind

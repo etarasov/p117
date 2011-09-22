@@ -9,6 +9,7 @@ import Happstack.Server.Internal.Monads
 import Happstack.Server.SimpleHTTP
 import Happstack.State.Control
 import Network.Socket
+import P117.MainPage as MainPage
 import P117.Utils
 import System.Posix.Syslog
 import Text.Blaze
@@ -41,6 +42,6 @@ unpackErrorT handler = do
         Right x -> return x
 
 control :: ServerPartT (ErrorT String IO) Response
-control = msum [ dir "static" $ serveDirectory EnableBrowsing [] "static"
-               , return $ buildResponse "ok"
+control = msum [ nullDir >> MainPage.pageHandler
+               , dir "static" $ serveDirectory EnableBrowsing [] "static"
                ]
