@@ -18,7 +18,8 @@ Executable p117
                     mtl >= 1.1,
                     safe >= 0.3,
                     network >= 2.2 && < 3,
-                    hsyslog >= 1.4 && < 2
+                    hsyslog >= 1.4 && < 2,
+                    blaze-html >= 0.4 && < 0.5
     Main-Is:        Main.hs
     Other-modules:  P117.Utils
     Hs-Source-Dirs: src

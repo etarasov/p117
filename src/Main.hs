@@ -2,7 +2,6 @@
 module Main where
 
 import Control.Concurrent (forkIO, killThread)
-import Control.Exception
 import Control.Monad.Error
 import Data.Monoid
 import Happstack.Server.FileServe
@@ -12,6 +11,7 @@ import Happstack.State.Control
 import Network.Socket
 import P117.Utils
 import System.Posix.Syslog
+import Text.Blaze
 
 main :: IO ()
 main = do
