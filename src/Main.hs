@@ -10,9 +10,7 @@ import Happstack.Server.SimpleHTTP
 import Happstack.State.Control
 import Network.Socket
 import P117.MainPage as MainPage
-import P117.Utils
 import System.Posix.Syslog
-import Text.Blaze
 
 main :: IO ()
 main = do
