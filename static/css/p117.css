@@ -1,0 +1,7 @@
+div#mainTree {
+    float: left;
+    width: 20%;
+}
+div.SelectedItem {
+    text-decoration: underline;
+}

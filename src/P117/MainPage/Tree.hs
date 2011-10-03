@@ -20,6 +20,7 @@ import qualified Text.Blaze.Html5.Attributes as A
 treeToHtml :: [Tree TreeItem] -> Html
 treeToHtml branches = do
     H.div ! A.id "mainTree"
+          ! dataAttribute "selectedItemId" "-1"
           ! A.onclick "tree_toggle(arguments[0])"
           $ do
         H.div $ "Tree"
@@ -37,7 +38,8 @@ treeToHtml branches = do
                 H.div ! A.class_ "Content"
                       ! A.title (fromString title)
                       ! dataAttribute "pageId" (fromString $ show pageId)
-                      $ fromString label
+                    $ H.span ! A.class_ "ItemText"
+                             $ fromString label
         treeToHtmlRoot' isLast (Node (TreeItem label title pageId) children) = do
             let class_ = if isLast then "Node IsRoot ExpandClosed IsLast" else "Node IsRoot ExpandClosed"
             H.li ! A.class_ (fromString class_) $ do
@@ -45,7 +47,8 @@ treeToHtml branches = do
                 H.div ! A.class_ "Content"
                       ! A.title (fromString title)
                       ! dataAttribute "pageId" (fromString $ show pageId)
-                      $ fromString label
+                    $ H.span ! A.class_ "ItemText"
+                             $ fromString label
                 H.ul ! A.class_ "Container" $ do
                     let initChildren = initSafe  children
                     let lastChildM = lastMay children
@@ -60,7 +63,8 @@ treeToHtml branches = do
                 H.div ! A.class_ "Content"
                       ! A.title (fromString title)
                       ! dataAttribute "pageId" (fromString $ show pageId)
-                      $ fromString label
+                    $ H.span ! A.class_ "ItemText"
+                             $ fromString label
         treeToHtml' isLast (Node (TreeItem label title pageId) children) = do
             let class_ = if isLast then "Node ExpandClosed IsLast" else "Node ExpandClosed"
             H.li ! A.class_ (fromString class_) $ do
@@ -68,7 +72,8 @@ treeToHtml branches = do
                 H.div ! A.class_ "Content"
                       ! A.title (fromString title)
                       ! dataAttribute "pageId" (fromString $ show pageId)
-                      $ fromString label
+                    $ H.span ! A.class_ "ItemText"
+                             $ fromString label
                 H.ul ! A.class_ "Container" $ do
                     let initChildren = initSafe  children
                     let lastChildM = lastMay children
