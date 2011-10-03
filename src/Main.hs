@@ -40,6 +40,7 @@ unpackErrorT handler = do
         Right x -> return x
 
 control :: ServerPartT (ErrorT String IO) Response
-control = msum [ nullDir >> MainPage.pageHandler
+control = msum [ nullDir >> seeOther "/mainpage" (toResponse "")
+               , dir "mainpage" $ MainPage.pageHandler
                , dir "static" $ serveDirectory EnableBrowsing [] "static"
                ]

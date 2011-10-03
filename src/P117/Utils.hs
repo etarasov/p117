@@ -2,8 +2,11 @@
 
 module P117.Utils where
 
+import Control.Monad.Error
+import Happstack.Server
 import Happstack.Server.Internal.Types
 import Happstack.Server.Response
+import Safe
 import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
@@ -30,3 +33,41 @@ buildResponse :: Html -> Response
 buildResponse content =
     let response = toResponse $ htmlWrapper content
     in response {rsHeaders = mkHeaders [("Content-type", "text/html; charset=utf8")]}
+
+getInputString :: MonadIO m => String -> ServerPartT (ErrorT String m) String
+getInputString input = do
+    resE <- getDataFn $ look input
+    case resE of
+        Left _ -> throwError $ "Parameter not found: " ++ input
+        Right res -> return res
+
+getInputNonEmptyString :: MonadIO m => String -> ServerPartT (ErrorT String m) String
+getInputNonEmptyString input = do
+    res <- getInputString input
+    if res == ""
+        then throwError $ "Parameter should not be empty: " ++ input
+        else return res
+
+getInputOrEmptyString :: MonadIO m => String -> ServerPartT (ErrorT String m) String
+getInputOrEmptyString input = do
+    b <- isThereInput input
+    if not b
+        then
+            return ""
+        else
+            getInputString input
+
+getInputRead :: (Read a, MonadIO m) => String -> ServerPartT (ErrorT String m) a
+getInputRead input = do
+    resS <- getInputString input
+    let resM = readMay resS
+    case resM of
+        Just res -> return res
+        Nothing -> throwError $ "Error while parsing parameter: " ++ input
+
+isThereInput :: MonadIO m => String -> ServerPartT (ErrorT String m) Bool
+isThereInput input = do
+    resE <- getDataFn $ look input
+    return $ case resE of
+                Left _ -> False
+                Right _ -> True
