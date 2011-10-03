@@ -20,9 +20,10 @@ Executable p117
                     network >= 2.2 && < 3,
                     hsyslog >= 1.4 && < 2,
                     blaze-html >= 0.4 && < 0.5,
-                    HDBC         == 2.3.*,
-                    HDBC-sqlite3 == 2.3.*,
-                    containers   >= 0.3 && < 0.5
+                    HDBC          == 2.3.*,
+                    HDBC-sqlite3  == 2.3.*,
+                    containers    >= 0.3 && < 0.5,
+                    monad-control == 0.2
     Main-Is:        Main.hs
     Other-modules:  P117.MainPage
                     P117.Utils

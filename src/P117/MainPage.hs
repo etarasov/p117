@@ -2,7 +2,9 @@
 
 module P117.MainPage where
 
+import Control.Exception.Control
 import Control.Monad.Error
+import Data.Maybe
 import Data.Monoid
 import Data.String
 import Data.Tree
@@ -30,32 +32,11 @@ pageHandlerGet = do
     liftIO $ disconnect conn
 
 
+    predicateTree <- getTreeForPredicate 1
+
     return $ buildResponse $ do
         "117"
-        treeToHtml [ Node "MyRoot"
-                          [Node "item1" [], Node "item2" [Node "item3" [], Node "item4" [], Node "item5" [], Node "item6" []]]
-                   , Node "MyRoot2" []
-                   , Node "MyRoot3"
-                          [Node "item2" []]
-                   ]
-        fromString descr
-    {-
-        "Проект 117"
-        H.div ! A.id "mainTree"
-              ! A.onclick "tree_toggle(arguments[0])"
-              $ do
-            H.div $ "Tree"
-            H.ul ! A.class_ "Container" $
-                H.li ! A.class_ "Node IsRoot IsLast ExpandClosed" $ do
-                    H.div ! A.class_ "Expand" $ ""
-                    H.div ! A.class_ "Content" $ "Root"
-                    H.ul ! A.class_ "Container" $
-                        H.li ! A.class_ "Node ExpandLeaf IsLast" $ do
-                            H.div ! A.class_ "Expand" $ ""
-                            H.div ! A.class_ "Content" $ "Item"
-        H.br
-        fromString descr
-        -}
+        treeToHtml predicateTree
 
 pageHandlerPost :: ServerPartT (ErrorT String IO) Response
 pageHandlerPost = undefined
@@ -105,3 +86,48 @@ treeToHtml branches = do
                     let lastChildM = lastMay children
                     mapM_ (treeToHtml' False) initChildren
                     maybe mempty (treeToHtml' True) lastChildM
+
+testForest :: Forest String
+testForest = [ Node "MyRoot"
+                    [Node "item1" [], Node "item2" [Node "item3" [], Node "item4" [], Node "item5" [], Node "item6" []]]
+             , Node "MyRoot2" []
+             , Node "MyRoot3"
+                    [Node "item2" []]
+             ]
+
+getTreeForPredicate :: Integer -> ServerPartT (ErrorT String IO) (Forest String)
+getTreeForPredicate predicateId = do
+    -- ErrorT is instance of MonadControlIO, but ServerPartT is not
+    -- so, lift from ServerPartT
+    lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
+                   (liftIO . disconnect)
+                   $ \conn -> do
+        r <- liftIO $ quickQuery' conn "SELECT DISTINCT value1 FROM binaryTrue WHERE binaryId == ?" [toSql predicateId]
+        let convRow [pageIdR] = fromSql pageIdR :: Integer
+        let maybeRootPages = map convRow r
+        rootPagesM <- mapM (checkRootPage conn predicateId) maybeRootPages
+        let rootPages = catMaybes rootPagesM
+        mapM (buildTreeFromRoot conn predicateId) rootPages
+
+    where
+        checkRootPage :: IConnection conn => conn -> Integer -> Integer -> ErrorT String IO (Maybe Integer)
+        checkRootPage conn predicateId pageId = do
+            r <- liftIO $ quickQuery' conn "SELECT COUNT(*) FROM binaryTrue WHERE binaryId == ? and value2 == ?" [toSql predicateId, toSql pageId]
+            let convRow [count] = fromSql count :: Integer
+            let count = convRow $ head r
+            return $ if count == 0 then Just pageId
+                                   else Nothing
+
+        buildTreeFromRoot :: IConnection conn => conn -> Integer -> Integer -> ErrorT String IO (Tree String)
+        buildTreeFromRoot conn predicateId rootId = do
+            -- 1. Получаем shortName страницы - корня
+            r <- liftIO $ quickQuery' conn "SELECT shortName FROM pages WHERE id == ?" [toSql rootId]
+            let rootName = fromSql $ head $ head r
+            -- 2. Получаем список дочерних страниц
+            r <- liftIO $ quickQuery' conn "SELECT value2 FROM binaryTrue where binaryId == ? and value1 == ?" [toSql predicateId, toSql rootId]
+            let convRow [idR] = fromSql idR :: Integer
+            let childrenId = map convRow r
+            -- 3. Строим дочерние деревья
+            children <- mapM (buildTreeFromRoot conn predicateId) childrenId
+            -- 4. Возвращаем всё дерево
+            return $ Node rootName children
