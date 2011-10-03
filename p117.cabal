@@ -26,6 +26,7 @@ Executable p117
                     monad-control == 0.2
     Main-Is:        Main.hs
     Other-modules:  P117.MainPage
+                    P117.MainPage.Tree
                     P117.Utils
     Hs-Source-Dirs: src
     Ghc-Options:    -threaded -Wall -fno-warn-unused-do-bind
