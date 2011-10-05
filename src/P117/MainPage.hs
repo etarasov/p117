@@ -49,6 +49,8 @@ pageHandlerGet = do
 
     return $ buildResponse $ do
         H.button ! A.id "editButton" $ "Edit"
+        H.button ! A.id "addButton" $ "Add"
+        H.button ! A.id "testButton" $ "Test"
         treeToHtml predicateTree
         H.div ! A.id "pageText" $ ""
 

@@ -5,3 +5,8 @@ div#mainTree {
 div.SelectedItem {
     text-decoration: underline;
 }
+
+div#pageText {
+    margin-left: 20%;
+    border: solid 1px;
+}

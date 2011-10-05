@@ -2,6 +2,7 @@ $(document).ready(function () {
 
     function rebuttonButtons () {
         $("#editButton").button().click(editButtonHandler);
+        $("#addButton").button().click(addButtonHandler);
     };
 
     var ajaxError = function (x,t,m) {
@@ -84,7 +85,60 @@ $(document).ready(function () {
     };
 
 
+    var treeState = 0;
     $("div.Content").click(selectItem);
 
     rebuttonButtons();
+
+    function saveTreeState () {
+        var getIdState = function (index, element) {
+            var id = $(element).attr("data-pageid");
+            var liElem = $(element).parent();
+            var state;
+            if ($(liElem).hasClass('ExpandOpen')) {
+                state = 'open';
+            }
+            if ($(liElem).hasClass('ExpandClosed')) {
+                state = 'closed';
+            }
+            if ($(liElem).hasClass('ExpandLeaf')) {
+                state = 'leaf';
+            }
+            return {id: id, state: state};
+        };
+        var itemsContent = $('#mainTree').find('div.Content');
+        treeState = itemsContent.map(getIdState);
+    };
+
+    function restoreTreeState () {
+        var restoreIdState = function (index, element) {
+            var id = $(element).attr('data-pageid');
+            var liElem = $(element).parent();
+            for (var i=0; i < treeState.length; i++){
+                if (treeState[i].id == id) {
+                    var state = treeState[i].state;
+                    if (state == "open") {
+                        $(liElem).removeClass("ExpandClosed");
+                        $(liElem).addClass("ExpandOpen");
+                    }
+                    if (state == "closed") {
+                        $(liElem).removeClass("ExpandOpen");
+                        $(liElem).addClass("ExpandClosed");
+                    }
+                }
+            };
+        };
+
+        var itemsContent = $('#mainTree').find('div.Content');
+        itemsContent.map(restoreIdState);
+    };
+
+    $('#testButton').button().click( function () {
+        if (treeState == 0) {
+            saveTreeState();
+        }
+        else {
+            restoreTreeState();
+        }
+    });
 })
