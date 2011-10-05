@@ -48,6 +48,8 @@ $(document).ready(function () {
 
         function submitPage () {
             var str = $("#editForm").serialize();
+            // Save 'shortName' field to change it in tree
+            var shortNameParam = $('#editForm > input[name="shortName"]').serializeArray();
             str = str + "&submit=Submit&pageId="+selectedItemId;
             $.ajax({
                 type: "POST",
@@ -58,6 +60,7 @@ $(document).ready(function () {
                 success: function (ans) {
                     if (ans == "ok") {
                         displaySelectedPage(selectedItemId);
+                        $('div.Content[data-pageid="'+selectedItemId+'"] > span.ItemText').html(shortNameParam[0].value);
                     }
                     else {
                     }

@@ -24,12 +24,12 @@ pageHandler = msum [ methodSP GET pageHandlerGet
 pageHandlerGet :: ServerPartT (ErrorT String IO) Response
 pageHandlerGet = do
     pageId <- getInputRead "pageId"
-    (title, text) <- lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
-                                    (liftIO . disconnect)
-                                    $ \ conn -> do
-        r <- liftIO $ quickQuery' conn "SELECT title,text FROM pages WHERE id == ?" [toSql (pageId :: Integer)]
-        let convRow :: [SqlValue] -> (String, String)
-            convRow [titleRaw, textRaw] = (fromSql titleRaw, fromSql textRaw)
+    (shortName, title, text) <- lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
+                                               (liftIO . disconnect)
+                                               $ \ conn -> do
+        r <- liftIO $ quickQuery' conn "SELECT shortName, title,text FROM pages WHERE id == ?" [toSql (pageId :: Integer)]
+        let convRow :: [SqlValue] -> (String, String, String)
+            convRow [shortNameRaw, titleRaw, textRaw] = (fromSql shortNameRaw, fromSql titleRaw, fromSql textRaw)
         when (null r) $ throwError $ "Page with id " ++ show pageId ++ " was not found"
         return $ convRow $ head r
 
@@ -39,6 +39,7 @@ pageHandlerGet = do
         H.br
         H.form ! A.id "editForm" ! A.method "post" $ do
             H.br
+            H.input ! A.type_ "text" ! A.name "shortName" ! A.value (fromString shortName)
             H.input ! A.type_ "text" ! A.name "title" ! A.value (fromString title)
             H.br
             H.textarea ! A.name "text" ! A.cols "80" ! A.rows "25" $ fromString text
@@ -47,11 +48,12 @@ pageHandlerPost :: ServerPartT (ErrorT String IO) Response
 pageHandlerPost = do
     pageId <- getInputRead "pageId"
     let _ = pageId :: Integer
+    shortName <- getInputString "shortName"
     title <- getInputString "title"
     text <- getInputString "text"
     lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
                    (liftIO . disconnect)
                    $ \ conn -> do
-        liftIO $ run conn "UPDATE pages SET title=?, text=? WHERE id = ?" [toSql title, toSql text, toSql pageId]
+        liftIO $ run conn "UPDATE pages SET shortName=?, title=?, text=? WHERE id = ?" [toSql shortName, toSql title, toSql text, toSql pageId]
         liftIO $ commit conn
     return $ toResponse $ encode ("ok" :: String)
