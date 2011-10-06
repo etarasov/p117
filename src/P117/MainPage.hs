@@ -10,6 +10,7 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 import Happstack.Server
 import qualified P117.MainPage.EditPage as EditPage
+import qualified P117.MainPage.AddPage as AddPage
 import P117.MainPage.Tree
 import P117.Utils
 import Safe
@@ -21,7 +22,9 @@ import qualified Text.Blaze.Html5.Attributes as A
 
 pageHandler :: ServerPartT (ErrorT String IO) Response
 pageHandler = msum [ dir "page" (methodSP GET getPage)
+                   , dir "tree" (methodSP GET getTree)
                    , dir "editpage" EditPage.pageHandler
+                   , dir "addpage" AddPage.pageHandler
                    , methodSP GET pageHandlerGet
                    , methodSP POST pageHandlerPost
                    ]
@@ -43,15 +46,25 @@ getPage = do
         fromString text
         return ()
 
+getTree :: ServerPartT (ErrorT String IO) Response
+getTree = do
+    predicateId <- getInputRead "predicateId"
+    predicateTree <- getTreeForPredicate predicateId
+
+    return $ toResponse $
+        treeToHtml predicateId predicateTree
+
 pageHandlerGet :: ServerPartT (ErrorT String IO) Response
 pageHandlerGet = do
-    predicateTree <- getTreeForPredicate 1
+    let predicateId = 1
+    predicateTree <- getTreeForPredicate predicateId
 
     return $ buildResponse $ do
         H.button ! A.id "editButton" $ "Edit"
         H.button ! A.id "addButton" $ "Add"
         H.button ! A.id "testButton" $ "Test"
-        treeToHtml predicateTree
+        H.div ! A.id "treeBlock" $
+            treeToHtml predicateId predicateTree
         H.div ! A.id "pageText" $ ""
 
 pageHandlerPost :: ServerPartT (ErrorT String IO) Response

@@ -27,16 +27,20 @@ $(document).ready(function () {
         return res;
     };
 
-    function selectItem () {
+    function clickTreeItem () {
         var pageId = this.getAttribute("data-pageid");
-        var selectedItemId = $('#mainTree').attr("selectedItemId");
+        selectTreeItem(pageId);
+    }
+
+    function selectTreeItem (pageId) {
+        var selectedItemId = $('#mainTree').attr("data-selectedItemId");
         if (pageId != selectedItemId) {
             var res = displaySelectedPage(pageId);
             if (res == "ok") {
-                var selectedItemId = $('#mainTree').attr("selectedItemId");
+                var selectedItemId = $('#mainTree').attr("data-selectedItemId");
                 $('div.Content[data-pageid="'+selectedItemId+'"]').removeClass("SelectedItem");
 
-                $('#mainTree').attr("selectedItemId", pageId);
+                $('#mainTree').attr("data-selectedItemId", pageId);
                 $('div.Content[data-pageid="'+pageId+'"]').addClass("SelectedItem");
             }
             else {
@@ -44,51 +48,16 @@ $(document).ready(function () {
         }
     };
 
-    function editButtonHandler () {
-        var selectedItemId = $('#mainTree').attr("selectedItemId");
-
-        function submitPage () {
-            var str = $("#editForm").serialize();
-            // Save 'shortName' field to change it in tree
-            var shortNameParam = $('#editForm > input[name="shortName"]').serializeArray();
-            str = str + "&submit=Submit&pageId="+selectedItemId;
-            $.ajax({
-                type: "POST",
-                url: "/mainpage/editpage",
-                data: str,
-                dataType: "json",
-                error: ajaxError,
-                success: function (ans) {
-                    if (ans == "ok") {
-                        displaySelectedPage(selectedItemId);
-                        $('div.Content[data-pageid="'+selectedItemId+'"] > span.ItemText').html(shortNameParam[0].value);
-                    }
-                    else {
-                    }
-                },
-            });
-
-        };
-
-        $.ajax({
-            type: "GET",
-            url: "/mainpage/editpage",
-            data: "pageId="+selectedItemId,
-            dataType: "html",
-            error: ajaxError,
-            success: function (ans) {
-                $('#pageText').html(ans);
-                $('#previewButton').button();
-                $('#submitButton').button().click(submitPage);
-            },
+    function reloadTree (pageToSelectId) {
+        var pageId = pageToSelectId || $('#mainTree').attr("data-selectedItemId");
+        var predicateId = $('#mainTree').attr("data-predicateid");
+        saveTreeState();
+        $('div#treeBlock').load('/mainpage/tree?predicateId='+predicateId, function () {
+            restoreTreeState();
+            selectTreeItem(pageId);
+            $("div.Content").click(clickTreeItem);
         });
-    };
-
-
-    var treeState = 0;
-    $("div.Content").click(selectItem);
-
-    rebuttonButtons();
+    }
 
     function saveTreeState () {
         var getIdState = function (index, element) {
@@ -133,12 +102,95 @@ $(document).ready(function () {
         itemsContent.map(restoreIdState);
     };
 
+    function editButtonHandler () {
+        var selectedItemId = $('#mainTree').attr("data-selectedItemId");
+
+        function submitPage () {
+            var str = $("#editForm").serialize();
+            // Save 'shortName' field to change it in tree
+            var shortNameParam = $('#editForm > input[name="shortName"]').serializeArray();
+            str = str + "&submit=Submit&pageId="+selectedItemId;
+            $.ajax({
+                type: "POST",
+                url: "/mainpage/editpage",
+                data: str,
+                dataType: "json",
+                error: ajaxError,
+                success: function (ans) {
+                    if (ans == "ok") {
+                        displaySelectedPage(selectedItemId);
+                        $('div.Content[data-pageid="'+selectedItemId+'"] > span.ItemText').html(shortNameParam[0].value);
+                    }
+                    else {
+                    }
+                },
+            });
+
+        };
+
+        $.ajax({
+            type: "GET",
+            url: "/mainpage/editpage",
+            data: "pageId="+selectedItemId,
+            dataType: "html",
+            error: ajaxError,
+            success: function (ans) {
+                $('#pageText').html(ans);
+                $('#previewButton').button();
+                $('#submitButton').button().click(submitPage);
+            },
+        });
+    };
+
+    function addButtonHandler () {
+        var selectedItemId = $('#mainTree').attr("data-selectedItemId");
+        var predicateId = $('#mainTree').attr("data-predicateId");
+
+        function submitPage () {
+            var str = $("#addForm").serialize();
+            str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId;
+            $.ajax({
+                type: "POST",
+                url: "/mainpage/addpage",
+                data: str,
+                dataType: "json",
+                error: ajaxError,
+                success: function (ans) {
+                    if (ans[0] == "ok") {
+                        var pageId = ans[1];
+                        // reload tree
+                        reloadTree(pageId);
+                    }
+                    else
+                    {
+                        alert('Ошибка добавления страницы:'+ans);
+                    }
+                },
+            });
+        };
+
+        $.ajax({
+            type: "GET",
+            url: "/mainpage/addpage",
+            data: "pageId="+selectedItemId+"&predicateId="+predicateId,
+            dataType: "html",
+            error: ajaxError,
+            success: function (ans) {
+                $("#pageText").html(ans);
+                $('#previewButton').button();
+                $('#submitButton').button().click(submitPage);
+            }
+        });
+    };
+
+
+    var treeState = 0;
+    $("div.Content").click(clickTreeItem);
+
+    rebuttonButtons();
+
+
     $('#testButton').button().click( function () {
-        if (treeState == 0) {
-            saveTreeState();
-        }
-        else {
-            restoreTreeState();
-        }
+        reloadTree();
     });
 })

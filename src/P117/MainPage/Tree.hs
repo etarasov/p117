@@ -17,10 +17,11 @@ import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
-treeToHtml :: [Tree TreeItem] -> Html
-treeToHtml branches = do
+treeToHtml :: Integer -> [Tree TreeItem] -> Html
+treeToHtml predicateId branches = do
     H.div ! A.id "mainTree"
           ! dataAttribute "selectedItemId" "-1"
+          ! dataAttribute "predicateId" (fromString $ show predicateId)
           ! A.onclick "tree_toggle(arguments[0])"
           $ do
         H.div $ "Tree"
