@@ -146,9 +146,12 @@ $(document).ready(function () {
         var selectedItemId = $('#mainTree').attr("data-selectedItemId");
         var predicateId = $('#mainTree').attr("data-predicateId");
 
+        // Get id of page parent in the tree. It's used when create new page at the same level as selected page.
+        var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
+
         function submitPage () {
             var str = $("#addForm").serialize();
-            str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId;
+            str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId+"&parentId="+parentSelectedItemId;
             $.ajax({
                 type: "POST",
                 url: "/mainpage/addpage",

@@ -65,8 +65,9 @@ pageHandlerGet = do
 pageHandlerPost :: ServerPartT (ErrorT String IO) Response
 pageHandlerPost = do
     relativePageId <- getInputRead "pageId"
+    parentId <- getInputRead "parentId"
     predicateId <- getInputRead "predicateId"
-    let _ = relativePageId + predicateId :: Integer
+    let _ = relativePageId + predicateId + parentId :: Integer
     insertPosition <- getInputString "insertPosition"
     shortName <- getInputString "shortName"
     title <- getInputString "title"
@@ -84,14 +85,14 @@ pageHandlerPost = do
         case insertPosition of
             "inside" -> do
                 liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, ?, ?)" [toSql predicateId, toSql relativePageId, toSql pageId]
-                liftIO $ commit conn
             "after" -> do
                 isRelativePageRootPage <- isPageRootPage conn predicateId relativePageId
                 when isRelativePageRootPage $
                     throwError "trying to create page on the same level as root page"
-                undefined
-            "root" -> undefined
+                liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, ?, ?)" [toSql predicateId, toSql parentId, toSql pageId]
+            "root" -> return 0
             a -> throwError $ "unknown insert position: " ++ a
+        liftIO $ commit conn
         return pageId
 
     return $ toResponse $ encode ("ok" :: String, pageId)
