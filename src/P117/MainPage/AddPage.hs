@@ -90,7 +90,8 @@ pageHandlerPost = do
                 when isRelativePageRootPage $
                     throwError "trying to create page on the same level as root page"
                 liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, ?, ?)" [toSql predicateId, toSql parentId, toSql pageId]
-            "root" -> return 0
+            "root" -> do
+                liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, -1, ?)" [toSql predicateId, toSql pageId]
             a -> throwError $ "unknown insert position: " ++ a
         liftIO $ commit conn
         return pageId

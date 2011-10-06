@@ -103,14 +103,15 @@ getTreeForPredicate predicateId = do
     lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
                    (liftIO . disconnect)
                    $ \conn -> do
-        r <- liftIO $ quickQuery' conn "SELECT DISTINCT value1 FROM binaryTrue WHERE binaryId == ?" [toSql predicateId]
+        r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2 FROM binaryTrue WHERE binaryId == ? AND value1 == -1" [toSql predicateId]
         let convRow [pageIdR] = fromSql pageIdR :: Integer
-        let maybeRootPages = map convRow r
-        rootPagesM <- mapM (checkRootPage conn predicateId) maybeRootPages
-        let rootPages = catMaybes rootPagesM
+        let rootPages = map convRow r
+        -- rootPagesM <- mapM (checkRootPage conn predicateId) maybeRootPages
+        -- let rootPages = catMaybes rootPagesM
         mapM (buildTreeFromRoot conn predicateId) rootPages
 
     where
+        {-
         checkRootPage :: IConnection conn => conn -> Integer -> Integer -> ErrorT String IO (Maybe Integer)
         checkRootPage conn predicateId pageId = do
             r <- liftIO $ quickQuery' conn "SELECT COUNT(*) FROM binaryTrue WHERE binaryId == ? and value2 == ?" [toSql predicateId, toSql pageId]
@@ -118,6 +119,7 @@ getTreeForPredicate predicateId = do
             let count = convRow $ head r
             return $ if count == 0 then Just pageId
                                    else Nothing
+                                       -}
 
         buildTreeFromRoot :: IConnection conn => conn -> Integer -> Integer -> ErrorT String IO (Tree TreeItem)
         buildTreeFromRoot conn predicateId rootId = do
