@@ -11,6 +11,5 @@ value1 TEXT,
 value2 TEXT );
 CREATE TABLE pages (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-shortName text,
 title text,
 text text );

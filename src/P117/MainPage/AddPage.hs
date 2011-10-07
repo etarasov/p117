@@ -41,7 +41,6 @@ pageHandlerGet = do
                                (liftIO . disconnect)
                                $ \ conn -> isPageRootPage conn predicateId pageId
 
-    let shortName = "newpage"
     let title = "New Page"
     let text = "Please write page text"
 
@@ -57,7 +56,6 @@ pageHandlerGet = do
                     H.option ! A.value "after" $ "After selected page on the same level"
                 H.option ! A.value "root" $ "as root page"
             H.br
-            H.input ! A.type_ "text" ! A.name "shortName" ! A.value (fromString shortName)
             H.input ! A.type_ "text" ! A.name "title" ! A.value (fromString title)
             H.br
             H.textarea ! A.name "text" ! A.cols "80" ! A.rows "25" $ fromString text
@@ -69,16 +67,15 @@ pageHandlerPost = do
     predicateId <- getInputRead "predicateId"
     let _ = relativePageId + predicateId + parentId :: Integer
     insertPosition <- getInputString "insertPosition"
-    shortName <- getInputString "shortName"
     title <- getInputString "title"
     text <- getInputString "text"
 
     pageId <- lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
                              (liftIO . disconnect)
                              $ \ conn -> do
-        liftIO $ run conn "INSERT INTO pages (shortName, title, text) VALUES (?, ?, ?)" [toSql shortName, toSql title, toSql text]
+        liftIO $ run conn "INSERT INTO pages (title, text) VALUES (?, ?)" [toSql title, toSql text]
         -- liftIO $ commit conn
-        r <- liftIO $ quickQuery' conn "SELECT max(id) FROM pages WHERE shortName == ? and title == ? and text == ?" [toSql shortName, toSql title, toSql text]
+        r <- liftIO $ quickQuery' conn "SELECT max(id) FROM pages WHERE title == ? and text == ?" [toSql title, toSql text]
         let r' = headMay r >>= headMay
         pageId <- maybe (throwError "error getting id of new created page") (return . fromSql) r'
         let _ = pageId :: Integer
