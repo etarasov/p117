@@ -50,7 +50,7 @@ $(document).ready(function () {
         var pageId = pageToSelectId || $('#mainTree').attr("data-selectedItemId");
         var predicateId = $('#mainTree').attr("data-predicateid");
         saveTreeState();
-        $('div#treeBlock').load('/mainpage/tree?predicateId='+predicateId, function () {
+        $('div#treeContainer').load('/mainpage/tree?predicateId='+predicateId, function () {
             restoreTreeState();
             selectTreeItem(pageId);
             $("div.Content").click(clickTreeItem);

@@ -34,7 +34,7 @@ getPage = do
     pageId <- getInputRead "pageId"
     (title, text) <- lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
                                     (liftIO . disconnect)
-                                    $ \conn -> do
+                                    $ \ conn -> do
         r <- liftIO $ quickQuery' conn "SELECT title,text FROM pages WHERE id == ?" [toSql (pageId :: Integer)]
         let convRow :: [SqlValue] -> (String, String)
             convRow [titleRaw, textRaw] = (fromSql titleRaw, fromSql textRaw)
@@ -59,12 +59,50 @@ getTree = do
 
 pageHandlerGet :: ServerPartT (ErrorT String IO) Response
 pageHandlerGet = do
-    let predicateId = 1
+    predicateIdE <- getDataFn $ readCookieValue "predicate"
+
+    predicateId <- lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
+                                  (liftIO . disconnect)
+                                  $ \ conn -> do
+        -- Check that there is at least one predicate in db
+        r <- liftIO $ quickQuery' conn "SELECT count(*) FROM binary" []
+        let countMay = headMay r >>= headMay
+        predicateCount <- maybe (throwError "error 2") (return . fromSql) countMay
+        if ((predicateCount :: Integer) < 1)
+            then
+                throwError "There are no predicates in base!"
+            else do
+                let getMinimumIdPredicate :: IConnection conn => conn -> ErrorT String IO Integer
+                    getMinimumIdPredicate conn = do
+                        r <- liftIO $ quickQuery' conn "SELECT min(id) FROM binary" []
+                        let predicateIdM = headMay r >>= headMay
+                        maybe (throwError "error 3") (return . fromSql) predicateIdM
+
+                -- Check a cookie
+                case predicateIdE of
+                    Left _ ->
+                        -- Get a predicate with minimum id from base
+                        getMinimumIdPredicate conn
+
+                    Right predicateId -> do
+                        let _ = predicateId :: Integer
+                        -- Check that predicate exist
+                        r <- liftIO $ quickQuery' conn "SELECT count(*) FROM binary where id == ?" [toSql predicateId]
+                        let countM = headMay r >>= headMay
+                        count <- maybe (throwError "error 4") (return . fromSql) countM
+                        if ((count :: Integer) < 1)
+                            then getMinimumIdPredicate conn
+                            else return predicateId
+
+    -- TODO: поставить куку с номером предиката
+
     predicateTree <- getTreeForPredicate predicateId
 
     return $ buildResponse $ do
-        H.div ! A.id "treeBlock" $
-            treeToHtml predicateId predicateTree
+        H.div ! A.id "treeBlock" $ do
+            -- Сюда добавить комбобокс со списком предикатов
+            H.div ! A.id "treeContainer" $
+                treeToHtml predicateId predicateTree
         H.div ! A.id "pageText" $ ""
         H.button ! A.id "testButton" $ "Test"
 
