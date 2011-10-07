@@ -22,6 +22,7 @@ $(document).ready(function () {
             },
             success: function (ans) {
                 $('#pageText').html(ans);
+                rebuttonButtons();
             },
         });
         return res;
@@ -35,16 +36,13 @@ $(document).ready(function () {
     function selectTreeItem (pageId) {
         var selectedItemId = $('#mainTree').attr("data-selectedItemId");
         if (pageId != selectedItemId) {
-            var res = displaySelectedPage(pageId);
-            if (res == "ok") {
-                var selectedItemId = $('#mainTree').attr("data-selectedItemId");
-                $('div.Content[data-pageid="'+selectedItemId+'"]').removeClass("SelectedItem");
+            var selectedItemId = $('#mainTree').attr("data-selectedItemId");
+            $('div.Content[data-pageid="'+selectedItemId+'"]').removeClass("SelectedItem");
 
-                $('#mainTree').attr("data-selectedItemId", pageId);
-                $('div.Content[data-pageid="'+pageId+'"]').addClass("SelectedItem");
-            }
-            else {
-            }
+            $('#mainTree').attr("data-selectedItemId", pageId);
+            $('div.Content[data-pageid="'+pageId+'"]').addClass("SelectedItem");
+
+            var res = displaySelectedPage(pageId);
         }
     };
 
@@ -186,11 +184,21 @@ $(document).ready(function () {
         });
     };
 
+    function selectFirstItem() {
+        var pageToSelect = $($($('span.ItemText').first()).parent()).attr("data-pageid");
+        if (pageToSelect) {
+            selectTreeItem(pageToSelect);
+        }
+        else {
+            alert("there are no pages in the predicate yet");
+        }
+    };
+
 
     var treeState = 0;
     $("div.Content").click(clickTreeItem);
+    selectFirstItem();
 
-    rebuttonButtons();
 
 
     $('#testButton').button().click( function () {

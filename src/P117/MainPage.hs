@@ -42,6 +42,9 @@ getPage = do
         return $ convRow $ head r
 
     return $ toResponse $ do
+        H.div ! A.id "buttonBar" $ do
+            H.button ! A.id "editButton" $ "Edit"
+            H.button ! A.id "addButton" $ "Add"
         H.h1 $ fromString title
         fromString text
         return ()
@@ -60,12 +63,10 @@ pageHandlerGet = do
     predicateTree <- getTreeForPredicate predicateId
 
     return $ buildResponse $ do
-        H.button ! A.id "editButton" $ "Edit"
-        H.button ! A.id "addButton" $ "Add"
-        H.button ! A.id "testButton" $ "Test"
         H.div ! A.id "treeBlock" $
             treeToHtml predicateId predicateTree
         H.div ! A.id "pageText" $ ""
+        H.button ! A.id "testButton" $ "Test"
 
 pageHandlerPost :: ServerPartT (ErrorT String IO) Response
 pageHandlerPost = undefined
