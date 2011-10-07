@@ -42,7 +42,7 @@ treeToHtml predicateId branches = do
                     $ H.span ! A.class_ "ItemText"
                              $ fromString label
         treeToHtmlRoot' isLast (Node (TreeItem label title pageId) children) = do
-            let class_ = if isLast then "Node IsRoot ExpandClosed IsLast" else "Node IsRoot ExpandClosed"
+            let class_ = if isLast then "Node IsRoot ExpandOpen IsLast" else "Node IsRoot ExpandOpen"
             H.li ! A.class_ (fromString class_) $ do
                 H.div ! A.class_ "Expand" $ ""
                 H.div ! A.class_ "Content"
@@ -67,7 +67,7 @@ treeToHtml predicateId branches = do
                     $ H.span ! A.class_ "ItemText"
                              $ fromString label
         treeToHtml' isLast (Node (TreeItem label title pageId) children) = do
-            let class_ = if isLast then "Node ExpandClosed IsLast" else "Node ExpandClosed"
+            let class_ = if isLast then "Node ExpandOpen IsLast" else "Node ExpandOpen"
             H.li ! A.class_ (fromString class_) $ do
                 H.div ! A.class_ "Expand" $ ""
                 H.div ! A.class_ "Content"
