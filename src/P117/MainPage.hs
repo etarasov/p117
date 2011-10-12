@@ -94,7 +94,7 @@ pageHandlerGet = do
                             then getMinimumIdPredicate conn
                             else return predicateId
 
-    -- TODO: поставить куку с номером предиката
+    addCookie (MaxAge $ 60*60*24*365*10) (mkCookie "predicate" $ show predicateId)
 
     predicateTree <- getTreeForPredicate predicateId
 
