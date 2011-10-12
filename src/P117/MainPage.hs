@@ -9,6 +9,7 @@ import Data.Tree
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Happstack.Server
+import P117.DBAccess
 import qualified P117.MainPage.EditPage as EditPage
 import qualified P117.MainPage.AddPage as AddPage
 import P117.MainPage.Tree
@@ -57,6 +58,10 @@ getTree = do
     return $ toResponse $
         treeToHtml predicateId predicateTree
 
+-- | Get predicates list for rendering in select control with js
+getBinaryPredicates :: ServerPartT (ErrorT String IO) Response
+getBinaryPredicates = undefined
+
 pageHandlerGet :: ServerPartT (ErrorT String IO) Response
 pageHandlerGet = do
     predicateIdE <- getDataFn $ readCookieValue "predicate"
@@ -98,13 +103,22 @@ pageHandlerGet = do
 
     predicateTree <- getTreeForPredicate predicateId
 
+    predicates <- lift getPredicates
+
     return $ buildResponse $ do
         H.div ! A.id "treeBlock" $ do
             -- Сюда добавить комбобокс со списком предикатов
+            H.select ! A.id "predicateSelect" ! A.name "predicate" $ do
+                mapM_ (predicateOption predicateId) predicates
             H.div ! A.id "treeContainer" $
                 treeToHtml predicateId predicateTree
         H.div ! A.id "pageText" $ ""
         H.button ! A.id "testButton" $ "Test"
+
+    where
+        predicateOption :: Integer -> (Integer, String) -> Html
+        predicateOption selectedId (pId, pName) = do
+            H.option ! A.value (fromString $ show pId) $ fromString pName
 
 pageHandlerPost :: ServerPartT (ErrorT String IO) Response
 pageHandlerPost = undefined

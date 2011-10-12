@@ -29,5 +29,6 @@ Executable p117
     Other-modules:  P117.MainPage
                     P117.MainPage.Tree
                     P117.Utils
+                    P117.DBAccess
     Hs-Source-Dirs: src
     Ghc-Options:    -threaded -Wall -fno-warn-unused-do-bind
