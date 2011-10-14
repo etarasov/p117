@@ -47,7 +47,7 @@ getPage = do
             H.button ! A.id "editButton" $ "Edit"
             H.button ! A.id "addButton" $ "Add"
         H.h1 $ fromString title
-        fromString text
+        preEscapedString text
         return ()
 
 getTree :: ServerPartT (ErrorT String IO) Response
