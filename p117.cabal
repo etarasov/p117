@@ -24,7 +24,7 @@ Executable p117
                     HDBC-sqlite3  == 2.3.*,
                     containers    >= 0.3 && < 0.5,
                     monad-control == 0.2.*,
-                    json          == 0.5.*
+                    json          >= 0.4 && < 0.6
     Main-Is:        Main.hs
     Other-modules:  P117.MainPage
                     P117.MainPage.Tree
