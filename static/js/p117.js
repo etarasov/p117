@@ -184,6 +184,12 @@ $(document).ready(function () {
         });
     };
 
+    function changePredicateSelectHandler () {
+        var newPredicate = $('#predicateSelect').val();
+        $('#mainTree').attr("data-predicateid", newPredicate);
+        reloadTree();
+    };
+
     function selectFirstItem() {
         var pageToSelect = $($($('span.ItemText').first()).parent()).attr("data-pageid");
         if (pageToSelect) {
@@ -199,6 +205,7 @@ $(document).ready(function () {
     $("div.Content").click(clickTreeItem);
     selectFirstItem();
 
+    $('#predicateSelect').change(changePredicateSelectHandler);
 
 
     $('#testButton').button().click( function () {
