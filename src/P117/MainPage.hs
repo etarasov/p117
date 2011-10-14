@@ -113,7 +113,6 @@ pageHandlerGet = do
             H.div ! A.id "treeContainer" $
                 treeToHtml predicateId predicateTree
         H.div ! A.id "pageText" $ ""
-        H.button ! A.id "testButton" $ "Test"
 
     where
         predicateOption :: Integer -> (Integer, String) -> Html
