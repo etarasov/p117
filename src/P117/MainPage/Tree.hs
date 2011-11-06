@@ -11,6 +11,7 @@ import Data.Tree
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Happstack.Server
+import P117.DBAccess
 import P117.Types
 import Safe
 import Text.Blaze
@@ -96,7 +97,7 @@ getTreeForPredicate :: Integer -> ServerPartT (ErrorT String IO) (Forest TreeIte
 getTreeForPredicate predicateId = do
     -- ErrorT is instance of MonadControlIO, but ServerPartT is not
     -- so, lift from ServerPartT
-    lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
+    lift $ bracket (liftIO p117Connect)
                    (liftIO . disconnect)
                    $ \conn -> do
         r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2 FROM binaryTrue WHERE binaryId == ? AND value1 == -1" [toSql predicateId]

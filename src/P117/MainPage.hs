@@ -107,7 +107,6 @@ pageHandlerGet = do
 
     return $ buildResponse $ do
         H.div ! A.id "treeBlock" $ do
-            -- Сюда добавить комбобокс со списком предикатов
             H.select ! A.id "predicateSelect" ! A.name "predicate" $ do
                 mapM_ (predicateOption predicateId) predicates
             H.div ! A.id "treeContainer" $
