@@ -2,8 +2,9 @@
 
 module P117.MainPage.Tree where
 
-import Control.Monad.Error
 import Control.Exception.Control
+import Control.Monad.Error
+import Control.Monad.State.Lazy
 import Data.Maybe
 import Data.Monoid
 import Data.String
@@ -33,20 +34,22 @@ treeToHtml predicateId branches = do
             maybe mempty (treeToHtmlRoot' True) lastBranchM
     where
         treeToHtmlRoot' :: Bool -> Tree TreeItem -> Html
-        treeToHtmlRoot' isLast (Node (TreeItem title pageId) []) = do
+        treeToHtmlRoot' isLast (Node (TreeItem title pageId itemId) []) = do
             let class_ = if isLast then "Node IsRoot ExpandLeaf IsLast" else "Node IsRoot ExpandLeaf"
             H.li ! A.class_ (fromString class_) $ do
                 H.div ! A.class_ "Expand" $ ""
                 H.div ! A.class_ "Content"
                       ! dataAttribute "pageId" (fromString $ show pageId)
+                      ! dataAttribute "itemId" (fromString $ show itemId)
                     $ H.span ! A.class_ "ItemText"
                              $ fromString title
-        treeToHtmlRoot' isLast (Node (TreeItem title pageId) children) = do
+        treeToHtmlRoot' isLast (Node (TreeItem title pageId itemId) children) = do
             let class_ = if isLast then "Node IsRoot ExpandOpen IsLast" else "Node IsRoot ExpandOpen"
             H.li ! A.class_ (fromString class_) $ do
                 H.div ! A.class_ "Expand" $ ""
                 H.div ! A.class_ "Content"
                       ! dataAttribute "pageId" (fromString $ show pageId)
+                      ! dataAttribute "itemId" (fromString $ show itemId)
                     $ H.span ! A.class_ "ItemText"
                              $ fromString title
                 H.ul ! A.class_ "Container" $ do
@@ -56,20 +59,22 @@ treeToHtml predicateId branches = do
                     maybe mempty (treeToHtml' True) lastChildM
 
         treeToHtml' :: Bool -> Tree TreeItem -> Html
-        treeToHtml' isLast (Node (TreeItem title pageId) []) = do
+        treeToHtml' isLast (Node (TreeItem title pageId itemId) []) = do
             let class_ = if isLast then "Node ExpandLeaf IsLast" else "Node ExpandLeaf"
             H.li ! A.class_ (fromString class_) $ do
                 H.div ! A.class_ "Expand" $ ""
                 H.div ! A.class_ "Content"
                       ! dataAttribute "pageId" (fromString $ show pageId)
+                      ! dataAttribute "itemId" (fromString $ show itemId)
                     $ H.span ! A.class_ "ItemText"
                              $ fromString title
-        treeToHtml' isLast (Node (TreeItem title pageId) children) = do
+        treeToHtml' isLast (Node (TreeItem title pageId itemId) children) = do
             let class_ = if isLast then "Node ExpandOpen IsLast" else "Node ExpandOpen"
             H.li ! A.class_ (fromString class_) $ do
                 H.div ! A.class_ "Expand" $ ""
                 H.div ! A.class_ "Content"
                       ! dataAttribute "pageId" (fromString $ show pageId)
+                      ! dataAttribute "itemId" (fromString $ show itemId)
                     $ H.span ! A.class_ "ItemText"
                              $ fromString title
                 H.ul ! A.class_ "Container" $ do
@@ -79,18 +84,18 @@ treeToHtml predicateId branches = do
                     maybe mempty (treeToHtml' True) lastChildM
 
 testForest :: Forest TreeItem
-testForest = [ Node (TreeItem "MyRoot" 1)
-                    [ Node (TreeItem "item1" 1) []
-                    , Node (TreeItem "item2" 1)
-                           [ Node (TreeItem "item3" 1) []
-                           , Node (TreeItem "item4" 1) []
-                           , Node (TreeItem "item5" 1) []
-                           , Node (TreeItem "item6" 1) []
+testForest = [ Node (TreeItem "MyRoot" 1 0)
+                    [ Node (TreeItem "item1" 1 1) []
+                    , Node (TreeItem "item2" 1 2)
+                           [ Node (TreeItem "item3" 1 3) []
+                           , Node (TreeItem "item4" 1 4) []
+                           , Node (TreeItem "item5" 1 5) []
+                           , Node (TreeItem "item6" 1 6) []
                            ]
                     ]
-             , Node (TreeItem "MyRoot2" 1) []
-             , Node (TreeItem "MyRoot3" 1)
-                    [Node (TreeItem "item2" 1) []]
+             , Node (TreeItem "MyRoot2" 1 7) []
+             , Node (TreeItem "MyRoot3" 1 8)
+                    [Node (TreeItem "item2" 1 9) []]
              ]
 
 getTreeForPredicate :: Integer -> ServerPartT (ErrorT String IO) (Forest TreeItem)
@@ -105,7 +110,8 @@ getTreeForPredicate predicateId = do
         let rootPages = map convRow r
         -- rootPagesM <- mapM (checkRootPage conn predicateId) maybeRootPages
         -- let rootPages = catMaybes rootPagesM
-        mapM (buildTreeFromRoot conn predicateId) rootPages
+        evalStateT ( mapM (buildTreeFromRoot conn predicateId) rootPages
+                   ) 0
 
     where
         {-
@@ -118,7 +124,7 @@ getTreeForPredicate predicateId = do
                                    else Nothing
                                        -}
 
-        buildTreeFromRoot :: IConnection conn => conn -> Integer -> Integer -> ErrorT String IO (Tree TreeItem)
+        buildTreeFromRoot :: IConnection conn => conn -> Integer -> Integer -> StateT Integer (ErrorT String IO) (Tree TreeItem)
         buildTreeFromRoot conn predicateId rootId = do
             -- 1. Получаем title страницы - корня
             r <- liftIO $ quickQuery' conn "SELECT title FROM pages WHERE id == ?" [toSql rootId]
@@ -133,4 +139,6 @@ getTreeForPredicate predicateId = do
             -- 3. Строим дочерние деревья
             children <- mapM (buildTreeFromRoot conn predicateId) childrenId
             -- 4. Возвращаем всё дерево
-            return $ Node (TreeItem rootTitle rootId) children
+            itemId <- get
+            modify (+1)
+            return $ Node (TreeItem rootTitle rootId itemId) children
