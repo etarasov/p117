@@ -110,22 +110,10 @@ getTreeForPredicate predicateId = do
         r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2 FROM binaryTrue WHERE binaryId == ? AND value1 == -1 ORDER BY value2" [toSql predicateId]
         let convRow [pageIdR] = fromSql pageIdR :: Integer
         let rootPages = map convRow r
-        -- rootPagesM <- mapM (checkRootPage conn predicateId) maybeRootPages
-        -- let rootPages = catMaybes rootPagesM
         evalStateT ( mapM (buildTreeFromRoot conn predicateId) rootPages
                    ) 0
 
     where
-        {-
-        checkRootPage :: IConnection conn => conn -> Integer -> Integer -> ErrorT String IO (Maybe Integer)
-        checkRootPage conn predicateId pageId = do
-            r <- liftIO $ quickQuery' conn "SELECT COUNT(*) FROM binaryTrue WHERE binaryId == ? and value2 == ?" [toSql predicateId, toSql pageId]
-            let convRow [count] = fromSql count :: Integer
-            let count = convRow $ head r
-            return $ if count == 0 then Just pageId
-                                   else Nothing
-                                       -}
-
         buildTreeFromRoot :: IConnection conn => conn -> Integer -> Integer -> StateT Integer (ErrorT String IO) (Tree TreeItem)
         buildTreeFromRoot conn predicateId rootId = do
             -- 1. Получаем title страницы - корня
