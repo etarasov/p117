@@ -105,7 +105,9 @@ getTreeForPredicate predicateId = do
     lift $ bracket (liftIO p117Connect)
                    (liftIO . disconnect)
                    $ \conn -> do
-        r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2 FROM binaryTrue WHERE binaryId == ? AND value1 == -1" [toSql predicateId]
+        -- Every root should have -1 as a parent
+        -- We need to get id's in the same order always, so use ORDER BY
+        r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2 FROM binaryTrue WHERE binaryId == ? AND value1 == -1 ORDER BY value2" [toSql predicateId]
         let convRow [pageIdR] = fromSql pageIdR :: Integer
         let rootPages = map convRow r
         -- rootPagesM <- mapM (checkRootPage conn predicateId) maybeRootPages
@@ -132,7 +134,7 @@ getTreeForPredicate predicateId = do
                 convRow [titleR] = fromSql titleR
             let rootTitle = convRow $ head r
             -- 2. Получаем список дочерних страниц
-            r <- liftIO $ quickQuery' conn "SELECT value2 FROM binaryTrue where binaryId == ? and value1 == ?" [toSql predicateId, toSql rootId]
+            r <- liftIO $ quickQuery' conn "SELECT value2 FROM binaryTrue where binaryId == ? and value1 == ? ORDER BY value2" [toSql predicateId, toSql rootId]
             let convRow :: [SqlValue] -> Integer
                 convRow [idR] = fromSql idR :: Integer
             let childrenId = map convRow r
