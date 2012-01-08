@@ -28,8 +28,27 @@ $(document).ready(function () {
         return res;
     };
 
+    function getPathForItemDiv (divElement) {
+        var pathBegin = divElement.getAttribute("data-pageid");
+
+        if ($(divElement).parent().hasClass("IsRoot")) {
+            return pathBegin
+        }
+        else {
+            parentDivElement = $(divElement).parent().parent().siblings("div.Content")[0];
+            nextId = parentDivElement.getAttribute("data-pageid");
+            console.log(nextId);
+            return (getPathForItemDiv (parentDivElement) + "_" + pathBegin)
+        }
+    }
+
     function clickTreeItem () {
         var pageId = this.getAttribute("data-pageid");
+
+        //debug
+        path = getPathForItemDiv(this);
+        console.log(path);
+
         selectTreeItem(pageId);
     }
 
@@ -200,6 +219,7 @@ $(document).ready(function () {
         }
     };
 
+    //^^^^^^^^^^^^^ Only functions definitions ^^^^^^^^^^^^^^^^^^^^^
 
     var treeState = 0;
     $("div.Content").click(clickTreeItem);
