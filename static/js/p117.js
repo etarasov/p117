@@ -45,7 +45,11 @@ $(document).ready(function () {
         pathElems = path.split("_");
         rootElemId = pathElems.shift();
         // 1. Find root element
-        rootElem = $("li.IsRoot > div.Content[data-pageid="+rootElemId+"]")[0];
+        rootElemList = $("li.IsRoot > div.Content[data-pageid="+rootElemId+"]");
+        if (rootElemList.length == 0) {
+            alert("there is no root for path " + path);
+        }
+        rootElem = rootElemList[0];
 
         // 2. Find other elements (divs)
         nextElem = rootElem;
