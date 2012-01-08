@@ -37,17 +37,50 @@ $(document).ready(function () {
         else {
             parentDivElement = $(divElement).parent().parent().siblings("div.Content")[0];
             nextId = parentDivElement.getAttribute("data-pageid");
-            console.log(nextId);
             return (getPathForItemDiv (parentDivElement) + "_" + pathBegin)
         }
+    }
+
+    function getItemDivForPath (path) {
+        pathElems = path.split("_");
+        rootElemId = pathElems.shift();
+        // 1. Find root element
+        rootElem = $("li.IsRoot > div.Content[data-pageid="+rootElemId+"]")[0];
+
+        // 2. Find other elements (divs)
+        nextElem = rootElem;
+        for (i in pathElems) {
+            // 2.1. Find "Container"
+            container = $(nextElem).siblings("ul.Container")[0];
+
+            // 2.2 Find a li element that has a child - a div with Content class and data-pageid=pathElems[i] attribute
+            nextDiv = null;
+            lis = $(container).children();
+            for (j=0; j < lis.length; j = j + 1) {
+                a = $(lis[j]).children("div.Content[data-pageid="+pathElems[i]+"]");
+                if (a.length > 0) {
+                    nextDiv = a[0];
+                }
+            }
+            if (nextDiv == null) {
+                alert("there is no path " + path);
+            }
+            else {
+                nextElem = nextDiv;
+            }
+        }
+        // 3. The last element in the list is the div we need
+        return nextElem;
     }
 
     function clickTreeItem () {
         var pageId = this.getAttribute("data-pageid");
 
-        //debug
         path = getPathForItemDiv(this);
-        console.log(path);
+
+        //debug
+        item = getItemDivForPath(path);
+        console.log(item);
 
         selectTreeItem(pageId);
     }
@@ -60,6 +93,7 @@ $(document).ready(function () {
 
             $('#mainTree').attr("data-selectedItemId", pageId);
             $('div.Content[data-pageid="'+pageId+'"]').addClass("SelectedItem");
+            // TODO: раскрыть всю ветвь
 
             var res = displaySelectedPage(pageId);
         }
@@ -77,7 +111,7 @@ $(document).ready(function () {
     }
 
     function saveTreeState () {
-        var getIdState = function (index, element) {
+        var getIdState = function (index, elemen) {
             var id = $(element).attr("data-pageid");
             var liElem = $(element).parent();
             var state;
