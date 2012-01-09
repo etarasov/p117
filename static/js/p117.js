@@ -115,7 +115,7 @@ $(document).ready(function () {
     }
 
     function saveTreeState () {
-        var getIdState = function (index, elemen) {
+        var getIdState = function (index, element) {
             var id = $(element).attr("data-pageid");
             var liElem = $(element).parent();
             var state;
