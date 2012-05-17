@@ -22,7 +22,7 @@ import qualified Text.Blaze.Html5.Attributes as A
 treeToHtml :: Integer -> [Tree TreeItem] -> Html
 treeToHtml predicateId branches = do
     H.div ! A.id "mainTree"
-          ! dataAttribute "selectedItemId" "-1"
+          ! dataAttribute "selectedPath" "-1"
           ! dataAttribute "predicateId" (fromString $ show predicateId)
           ! A.onclick "tree_toggle(arguments[0])"
           $ do
