@@ -25,7 +25,7 @@ main = do
                                               sock
                                               httpConf
                                               $ decodeBody (defaultBodyPolicy "/tmp/" 4096 20000 40000 )
-                                              >> control
+                                                >> control
     waitForTermination
     syslog Notice "Shutting down..."
     killThread httpTid
