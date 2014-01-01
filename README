@@ -1,0 +1,11 @@
+* How to init DB:
+> cd sql
+> sqlite3 test.db < p117.sql
+
+> sqlite3 test.db
+
+sqlite> insert into pages (title, text) values ("test1","test1 text");
+sqlite> insert into pages (title, text) values ("test2", "test2 text");
+sqlite> insert into binary (shortName) values ("pred1");
+sqlite> insert into binaryTrue (binaryId, value1, value2) values (1, -1, 1);
+sqlite> insert into binaryTrue (binaryId, value1, value2) values (1, 1, 2);
