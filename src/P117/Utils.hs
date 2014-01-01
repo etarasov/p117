@@ -20,7 +20,6 @@ htmlWrapper content = do
     H.html ! A.xmlns "http://www.w3.org/1999/xhtml" $ do
         H.head $ do
             H.title "117"
-            H.meta ! A.name "AUTHOR" ! A.content "Evgeny Tarasov"
             H.meta ! A.httpEquiv "Content-Type" ! A.content "text/html; charset=utf-8"
             H.link ! A.rel "stylesheet" ! A.type_ "text/css" ! A.href "/static/css/smoothness/jquery-ui-1.8.16.custom.css"
             H.link ! A.rel "stylesheet" ! A.type_ "text/css" ! A.href "/static/css/grid.css"
