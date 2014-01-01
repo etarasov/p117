@@ -206,7 +206,8 @@ $(document).ready(function () {
     };
 
     function editButtonHandler () {
-        var selectedItemId = $('#mainTree').attr("data-selectedItemId");
+        var path = $('#mainTree').attr("data-selectedpath");
+        var selectedItemId = path.split("_")[path.split("_").length - 1];
 
         function submitPage () {
             var str = $("#editForm").serialize();
@@ -246,8 +247,10 @@ $(document).ready(function () {
     };
 
     function addButtonHandler () {
-        var selectedItemId = $('#mainTree').attr("data-selectedItemId");
         var predicateId = $('#mainTree').attr("data-predicateId");
+
+        var path = $('#mainTree').attr("data-selectedpath");
+        var selectedItemId = path.split("_")[path.split("_").length - 1];
 
         // Get id of page parent in the tree. It's used when create new page at the same level as selected page.
         var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
