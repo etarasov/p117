@@ -1,7 +1,7 @@
 
 module P117.DBAccess where
 
-import Control.Exception.Control
+import Control.Exception.Lifted
 import Control.Monad.Error
 import Database.HDBC
 import Database.HDBC.Sqlite3

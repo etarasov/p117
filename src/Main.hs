@@ -7,14 +7,13 @@ import Data.Monoid
 import Happstack.Server.FileServe
 import Happstack.Server.Internal.Monads
 import Happstack.Server.SimpleHTTP
-import Happstack.State.Control
 import Network.Socket
 import P117.MainPage as MainPage
 import System.Posix.Syslog
 
 main :: IO ()
 main = do
-    let httpConf = Conf 9000 Nothing Nothing 60
+    let httpConf = Conf 9000 Nothing Nothing 60 Nothing
     sock <- socket AF_INET Stream defaultProtocol
     setSocketOption sock ReuseAddr 1
     loopbackIp <- inet_addr "127.0.0.1"

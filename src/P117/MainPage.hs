@@ -2,7 +2,7 @@
 
 module P117.MainPage where
 
-import Control.Exception.Control
+import Control.Exception.Lifted
 import Control.Monad.Error
 import Data.String
 import Data.Tree
@@ -16,6 +16,7 @@ import P117.MainPage.Tree
 import P117.Utils
 import Safe
 import Text.Blaze
+import Text.Blaze.Html
 import Text.Blaze.Internal
 import Text.JSON
 import qualified Text.Blaze.Html5 as H

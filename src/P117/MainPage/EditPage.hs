@@ -2,7 +2,7 @@
 
 module P117.MainPage.EditPage where
 
-import Control.Exception.Control
+import Control.Exception.Lifted
 import Control.Monad.Error
 import Data.String
 import Data.Tree

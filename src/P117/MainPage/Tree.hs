@@ -2,7 +2,7 @@
 
 module P117.MainPage.Tree where
 
-import Control.Exception.Control
+import Control.Exception.Lifted
 import Control.Monad.Error
 import Control.Monad.State.Lazy
 import Data.Maybe
@@ -16,6 +16,7 @@ import P117.DBAccess
 import P117.Types
 import Safe
 import Text.Blaze
+import Text.Blaze.Html
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 

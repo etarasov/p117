@@ -8,6 +8,8 @@ import Happstack.Server.Internal.Types
 import Happstack.Server.Response
 import Safe
 import Text.Blaze
+import Text.Blaze.Html
+import Text.Blaze.Internal
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
