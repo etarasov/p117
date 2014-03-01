@@ -30,9 +30,6 @@ htmlWrapper content = do
             H.script ! A.type_ "text/javascript" ! A.src "/static/js/tree_toggle.js" $ ""
             H.script ! A.type_ "text/javascript" ! A.src "/static/js/p117.js" $ ""
             -- H.link ! A.href "/static/css/p117.css" ! A.rel "stylesheet" ! A.type_ "text/css" ! A.title "p117"
-            -- jstree:
-            H.link ! A.rel "stylesheet" ! A.type_ "text/css" ! A.href "/static/jstree_dist/themes/default/style.min.css"
-            H.script ! A.type_ "text/javascript" ! A.src "/static/jstree_dist/jstree.js" $ ""
         content
 
 buildResponse :: Html -> Response
