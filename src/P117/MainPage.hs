@@ -113,8 +113,16 @@ pageHandlerGet = do
             H.div ! A.id "treeContainer" $
                 treeToHtml predicateId predicateTree
         H.div ! A.id "pageText" $ ""
+        H.div ! A.id "jstree_demo_div" $
+            H.ul $ do
+                H.li $ do
+                    "Root node 1"
+                    H.ul $ do
+                        H.li ! A.id "child_node_1" $ "Child node 1"
+                        H.li $ "Child node 2"
+                H.li $ "Root node 2"
 
-    where
+        where
         predicateOption :: Integer -> (Integer, String) -> Html
         predicateOption selectedId (pId, pName) = do
             H.option ! A.value (fromString $ show pId) $ fromString pName

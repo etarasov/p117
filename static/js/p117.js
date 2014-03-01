@@ -323,4 +323,10 @@ $(document).ready(function () {
     $('#testButton').button().click( function () {
         reloadTree();
     });
+
+    $('#jstree_demo_div').jstree();
+    $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+          console.log(data.selected);
+    });
+    $('#jstree_demo_div').jstree('create_node', '0', "asdf");
 })
