@@ -30,6 +30,8 @@ htmlWrapper content = do
             H.script ! A.type_ "text/javascript" ! A.src "/static/js/tree_toggle.js" $ ""
             H.script ! A.type_ "text/javascript" ! A.src "/static/js/p117.js" $ ""
             -- H.link ! A.href "/static/css/p117.css" ! A.rel "stylesheet" ! A.type_ "text/css" ! A.title "p117"
+            H.script ! A.type_ "text/javascript" ! A.src "/static/js/jquery.dynatree.js" $ ""
+            H.link ! A.rel "stylesheet" ! A.href "/static/css/skin/ui.dynatree.css" ! A.type_ "text/css"
         content
 
 buildResponse :: Html -> Response
