@@ -320,8 +320,19 @@ $(document).ready(function () {
     $('#predicateSelect').change(changePredicateSelectHandler);
 
 
-    $('#jstree_demo_div').jstree();
-    $('#jstree_demo_div').on("changed.jstree", function (e, data) {
-          console.log(data.selected);
+    $('#jstree_demo_div').dynatree({
+        onActivate: function(node) {
+                alert("You activated " + node.data.someData);
+        },
+        children: [
+            {title: "Item 1"},
+            {title: "Folder 2", isFolder: true, someData: "testData",
+                children: [
+                    {title: "sub-item 2.1"},
+                    {title: "sub-item 2.2"}
+                ]
+            },
+            {title: "Item 3"}
+        ]
     });
 })

@@ -115,11 +115,11 @@ pageHandlerGet = do
         H.div ! A.id "pageText" $ ""
         H.div ! A.id "jstree_demo_div" $
             H.ul $ do
-                H.li $ do
+                H.li ! A.data_ "someData:'test1'" $ do
                     "Root node 1"
                     H.ul $ do
-                        H.li ! A.id "child_node_1" $ "Child node 1"
-                        H.li $ "Child node 2"
+                        H.li ! A.id "child_node_1" ! A.data_ "someData: 'test11'" $ "Child node 1"
+                        H.li ! A.data_ "someData: 'test2'" $ "Child node 2"
                 H.li $ "Root node 2"
 
         where
