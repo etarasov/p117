@@ -314,13 +314,13 @@ $(document).ready(function () {
     //^^^^^^^^^^^^^ Only functions definitions ^^^^^^^^^^^^^^^^^^^^^
 
     var treeState = 0;
-    $("div.Content").click(clickTreeItem);
-    selectFirstItem();
+    //$("div.Content").click(clickTreeItem);
+    //selectFirstItem();
 
     $('#predicateSelect').change(changePredicateSelectHandler);
 
 
-    $('#jstree_demo_div').dynatree({
+    $('#mainTree').dynatree({
         onActivate: function(node) {
                 alert("You activated " + node.data.pageId);
         },

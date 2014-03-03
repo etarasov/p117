@@ -141,17 +141,12 @@ pageHandlerGet = do
         H.div ! A.id "treeBlock" $ do
             H.select ! A.id "predicateSelect" ! A.name "predicate" $ do
                 mapM_ (predicateOption predicateId) predicates
-            H.div ! A.id "treeContainer" $
-                treeToHtml predicateId predicateTree
+            H.div ! A.id "treeContainer"
+                  ! dataAttribute "selectedPath" "-1"
+                  ! dataAttribute "predicateId" (fromString $ show predicateId)
+                  $
+                H.div ! A.id "mainTree" $ ""
         H.div ! A.id "pageText" $ ""
-        H.div ! A.id "jstree_demo_div" $
-            H.ul $ do
-                H.li ! A.data_ "someData:'test1'" $ do
-                    "Root node 1"
-                    H.ul $ do
-                        H.li ! A.id "child_node_1" ! A.data_ "someData: 'test11'" $ "Child node 1"
-                        H.li ! A.data_ "someData: 'test2'" $ "Child node 2"
-                H.li $ "Root node 2"
 
         where
         predicateOption :: Integer -> (Integer, String) -> Html
