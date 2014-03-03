@@ -20,6 +20,7 @@ import Text.Blaze.Html
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
+{-
 treeToHtml :: Integer -> [Tree TreeItem] -> Html
 treeToHtml predicateId branches = do
     H.div ! A.id "mainTree"
@@ -83,20 +84,21 @@ treeToHtml predicateId branches = do
                     let lastChildM = lastMay children
                     mapM_ (treeToHtml' False) initChildren
                     maybe mempty (treeToHtml' True) lastChildM
+-}
 
 testForest :: Forest TreeItem
-testForest = [ Node (TreeItem "MyRoot" 1 0)
-                    [ Node (TreeItem "item1" 1 1) []
-                    , Node (TreeItem "item2" 1 2)
-                           [ Node (TreeItem "item3" 1 3) []
-                           , Node (TreeItem "item4" 1 4) []
-                           , Node (TreeItem "item5" 1 5) []
-                           , Node (TreeItem "item6" 1 6) []
+testForest = [ Node (TreeItem "MyRoot" 1)
+                    [ Node (TreeItem "item1" 1) []
+                    , Node (TreeItem "item2" 1)
+                           [ Node (TreeItem "item3" 1) []
+                           , Node (TreeItem "item4" 1) []
+                           , Node (TreeItem "item5" 1) []
+                           , Node (TreeItem "item6" 1) []
                            ]
                     ]
-             , Node (TreeItem "MyRoot2" 1 7) []
-             , Node (TreeItem "MyRoot3" 1 8)
-                    [Node (TreeItem "item2" 1 9) []]
+             , Node (TreeItem "MyRoot2" 1) []
+             , Node (TreeItem "MyRoot3" 1)
+                    [Node (TreeItem "item2" 1) []]
              ]
 
 getTreeForPredicate :: Integer -> ServerPartT (ErrorT String IO) (Forest TreeItem)
@@ -111,11 +113,10 @@ getTreeForPredicate predicateId = do
         r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2 FROM binaryTrue WHERE binaryId == ? AND value1 == -1 ORDER BY value2" [toSql predicateId]
         let convRow [pageIdR] = fromSql pageIdR :: Integer
         let rootPages = map convRow r
-        evalStateT ( mapM (buildTreeFromRoot conn predicateId) rootPages
-                   ) 0
+        mapM (buildTreeFromRoot conn predicateId) rootPages
 
     where
-        buildTreeFromRoot :: IConnection conn => conn -> Integer -> Integer -> StateT Integer (ErrorT String IO) (Tree TreeItem)
+        buildTreeFromRoot :: IConnection conn => conn -> Integer -> Integer -> (ErrorT String IO) (Tree TreeItem)
         buildTreeFromRoot conn predicateId rootId = do
             -- 1. Получаем title страницы - корня
             r <- liftIO $ quickQuery' conn "SELECT title FROM pages WHERE id == ?" [toSql rootId]
@@ -130,6 +131,4 @@ getTreeForPredicate predicateId = do
             -- 3. Строим дочерние деревья
             children <- mapM (buildTreeFromRoot conn predicateId) childrenId
             -- 4. Возвращаем всё дерево
-            itemId <- get
-            modify (+1)
-            return $ Node (TreeItem rootTitle rootId itemId) children
+            return $ Node (TreeItem rootTitle rootId) children
