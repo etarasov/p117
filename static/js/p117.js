@@ -322,7 +322,7 @@ $(document).ready(function () {
 
     $('#mainTree').dynatree({
         onActivate: function(node) {
-                //alert("You activated " + node.data.pageId);
+            displaySelectedPage(node.data.pageId);
         },
         initAjax: {
             url: "/mainpage/tree",
@@ -332,9 +332,15 @@ $(document).ready(function () {
         },
         cookieId: "117_maintree",
         onPostInit: function(isReloading, isError) {
+
             this.visit(function(n) {
                 n.expand(true);
             });
+
+            // The 0 node is "Loading..." status node during ajax loading.
+            // It can be seen in debugger on breadpoint
+            var node = this.getRoot().getChildren()[1];
+            this.activateKey(node.data.key);
         },
     });
 })
