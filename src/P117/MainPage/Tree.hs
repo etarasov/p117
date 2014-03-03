@@ -19,6 +19,7 @@ import Text.Blaze
 import Text.Blaze.Html
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
+import Text.JSON
 
 {-
 treeToHtml :: Integer -> [Tree TreeItem] -> Html
@@ -86,6 +87,17 @@ treeToHtml predicateId branches = do
                     maybe mempty (treeToHtml' True) lastChildM
 -}
 
+treeToJSON :: [Tree TreeItem] -> JSValue
+treeToJSON branches = JSArray $ map treeToJSON' branches
+    where
+    treeToJSON' :: Tree TreeItem -> JSValue
+    treeToJSON' (Node item children) =
+        makeObj
+            [ ("title", JSString $ toJSString $ tiTitle item)
+            , ("pageId", JSString $ toJSString $ show $ tiPageId item)
+            , ("children", JSArray $ map treeToJSON' children)
+            ]
+
 testForest :: Forest TreeItem
 testForest = [ Node (TreeItem "MyRoot" 1)
                     [ Node (TreeItem "item1" 1) []
@@ -100,6 +112,31 @@ testForest = [ Node (TreeItem "MyRoot" 1)
              , Node (TreeItem "MyRoot3" 1)
                     [Node (TreeItem "item2" 1) []]
              ]
+
+testJSON :: [JSValue]
+testJSON = [ makeObj [ ("title", JSString $ toJSString "Item1")
+                     , ("pageId", JSString $ toJSString $ show 1)
+                     , ("children", JSNull )
+                     ]
+           , makeObj [ ("title", JSString $ toJSString "Folder 2")
+                     , ("pageId", JSString $ toJSString $ show 2)
+                     , ("children", JSArray
+                           [ makeObj [ ("title", JSString $ toJSString "sub-item 2.1")
+                                     , ("pageId", JSString $ toJSString $ show 3)
+                                     , ("children", JSNull )
+                                     ]
+                           ,  makeObj [ ("title", JSString $ toJSString "sub-item 2.2")
+                                     , ("pageId", JSString $ toJSString $ show 4)
+                                     , ("children", JSNull )
+                                     ]
+                           ]
+                       )
+                     ]
+           , makeObj [ ("title", JSString $ toJSString "Item3")
+                     , ("pageId", JSString $ toJSString $ show 5)
+                     , ("children", JSNull )
+                     ]
+           ]
 
 getTreeForPredicate :: Integer -> ServerPartT (ErrorT String IO) (Forest TreeItem)
 getTreeForPredicate predicateId = do

@@ -322,10 +322,14 @@ $(document).ready(function () {
 
     $('#mainTree').dynatree({
         onActivate: function(node) {
-                alert("You activated " + node.data.pageId);
+                //alert("You activated " + node.data.pageId);
         },
         initAjax: {
-            url: "/mainpage/tree"
+            url: "/mainpage/tree",
+            data: {
+                predicateId: "1"
+            }
+
         }
     });
 })
