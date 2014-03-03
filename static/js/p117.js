@@ -328,8 +328,13 @@ $(document).ready(function () {
             url: "/mainpage/tree",
             data: {
                 predicateId: "1"
-            }
-
-        }
+            },
+        },
+        cookieId: "117_maintree",
+        onPostInit: function(isReloading, isError) {
+            this.visit(function(n) {
+                n.expand(true);
+            });
+        },
     });
 })
