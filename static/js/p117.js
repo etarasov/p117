@@ -322,17 +322,10 @@ $(document).ready(function () {
 
     $('#jstree_demo_div').dynatree({
         onActivate: function(node) {
-                alert("You activated " + node.data.someData);
+                alert("You activated " + node.data.pageId);
         },
-        children: [
-            {title: "Item 1"},
-            {title: "Folder 2", isFolder: true, someData: "testData",
-                children: [
-                    {title: "sub-item 2.1"},
-                    {title: "sub-item 2.2"}
-                ]
-            },
-            {title: "Item 3"}
-        ]
+        initAjax: {
+            url: "/mainpage/tree"
+        }
     });
 })

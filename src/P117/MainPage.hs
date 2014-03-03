@@ -51,6 +51,7 @@ getPage = do
         preEscapedString text
         return ()
 
+{-
 getTree :: ServerPartT (ErrorT String IO) Response
 getTree = do
     predicateId <- getInputRead "predicateId"
@@ -58,6 +59,36 @@ getTree = do
 
     return $ toResponse $
         treeToHtml predicateId predicateTree
+        -}
+
+-- Json version for dynatree
+getTree :: ServerPartT (ErrorT String IO) Response
+getTree = do
+    --predicateId <- getInputRead "predicateId"
+    let j = [ makeObj [ ("title", JSString $ toJSString "Item1")
+                      , ("pageId", JSString $ toJSString $ show 1)
+                      , ("children", JSNull )
+                      ]
+            , makeObj [ ("title", JSString $ toJSString "Folder 2")
+                      , ("pageId", JSString $ toJSString $ show 2)
+                      , ("children", JSArray
+                            [ makeObj [ ("title", JSString $ toJSString "sub-item 2.1")
+                                      , ("pageId", JSString $ toJSString $ show 3)
+                                      , ("children", JSNull )
+                                      ]
+                            ,  makeObj [ ("title", JSString $ toJSString "sub-item 2.2")
+                                      , ("pageId", JSString $ toJSString $ show 4)
+                                      , ("children", JSNull )
+                                      ]
+                            ]
+                        )
+                      ]
+            , makeObj [ ("title", JSString $ toJSString "Item3")
+                      , ("pageId", JSString $ toJSString $ show 5)
+                      , ("children", JSNull )
+                      ]
+            ]
+    return $ toResponse $ encode j
 
 -- | Get predicates list for rendering in select control with js
 getBinaryPredicates :: ServerPartT (ErrorT String IO) Response
