@@ -379,14 +379,15 @@ $(document).ready(function () {
         cookieId: "117_maintree",
         onPostInit: function(isReloading, isError) {
 
-            this.visit(function(n) {
-                n.expand(true);
-            });
+            //this.visit(function(n) {
+            //    n.expand(true);
+            //});
 
             var path = $('#treeContainer').attr("data-selectedpath");
             var node = getNodeForPath(this.getRoot(), path);
             this.activateKey(node.data.key);
         },
+        persist: true
     });
     console.log(window.location.origin);
 })
