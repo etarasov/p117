@@ -365,9 +365,10 @@ $(document).ready(function () {
             displaySelectedPage(node.data.pageId);
         },
         onClick: function(node, event) {
-            var path = getPathForNode(node);
-            window.location.pathname = "/mainpage?Path="+path+"&predicateId="+1;
-            return true;
+            if(node.getEventTargetType(event) == "title"){
+                var path = getPathForNode(node);
+                window.location.pathname = "/mainpage?Path="+path+"&predicateId="+1;
+            }
         },
         initAjax: {
             url: "/mainpage/tree",
