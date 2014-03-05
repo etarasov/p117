@@ -62,6 +62,27 @@ $(document).ready(function () {
         return res;
     }
 
+    function getNodeForPath(root, path) {
+        var res = null;
+        if (path == "") {
+            res = root;
+        }
+        else {
+            var pathElems = path.split(";");
+            var rootElem = pathElems.shift();
+
+            var children = root.getChildren();
+            for (var i=0; i < children.length; i++) {
+                if (children[i].data.pageId == rootElem) {
+                    res = getNodeForPath(children[i], pathElems.join(";"));
+                    break;
+                }
+            }
+        }
+
+        return res;
+    }
+
     function getItemIdForPath (path) {
         pathElems = path.split("_");
         rootElemId = pathElems.shift();
@@ -342,7 +363,11 @@ $(document).ready(function () {
     $('#mainTree').dynatree({
         onActivate: function(node) {
             displaySelectedPage(node.data.pageId);
-            alert(getPathForNode(node));
+        },
+        onClick: function(node, event) {
+            var path = getPathForNode(node);
+            window.location.pathname = "/mainpage?Path="+path+"&predicateId="+1;
+            return true;
         },
         initAjax: {
             url: "/mainpage/tree",
@@ -357,11 +382,10 @@ $(document).ready(function () {
                 n.expand(true);
             });
 
-            // The 0 node is "Loading..." status node during ajax loading.
-            // It can be seen in debugger on breadpoint
-            // TODO: use node.isStatusNode() to detect "Loading..." node
-            var node = this.getRoot().getChildren()[1];
+            var path = $('#treeContainer').attr("data-selectedpath");
+            var node = getNodeForPath(this.getRoot(), path);
             this.activateKey(node.data.key);
         },
     });
+    console.log(window.location.origin);
 })

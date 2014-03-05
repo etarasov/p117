@@ -46,6 +46,13 @@ getInputString input = do
         Left _ -> throwError $ "Parameter not found: " ++ input
         Right res -> return res
 
+getInputStringMay :: MonadIO m => String -> ServerPartT (ErrorT String m) (Maybe String)
+getInputStringMay input = do
+    b <- isThereInput input
+    if not b
+        then return Nothing
+        else getInputString input >>= (return . Just)
+
 getInputNonEmptyString :: MonadIO m => String -> ServerPartT (ErrorT String m) String
 getInputNonEmptyString input = do
     res <- getInputString input
@@ -69,6 +76,19 @@ getInputRead input = do
     case resM of
         Just res -> return res
         Nothing -> throwError $ "Error while parsing parameter: " ++ input
+
+getInputReadMay :: (Read a, MonadIO m) => String -> ServerPartT (ErrorT String m) (Maybe a)
+getInputReadMay input = do
+    b <- isThereInput input
+    if not b
+        then return Nothing
+        else do
+            resS <- getInputString input
+            let resM = readMay resS
+            maybe (throwError $ "Error while parsing parameter: " ++ input
+                              ++ "\nValue: " ++ resS)
+                  (return . Just)
+                  resM
 
 isThereInput :: MonadIO m => String -> ServerPartT (ErrorT String m) Bool
 isThereInput input = do
