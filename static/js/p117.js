@@ -362,6 +362,7 @@ $(document).ready(function () {
 
     $('#mainTree').dynatree({
         onActivate: function(node) {
+            console.log(node.tree.isUserEvent());
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
                 window.location.pathname = "/mainpage?Path="+path+"&predicateId="+1;
@@ -386,7 +387,13 @@ $(document).ready(function () {
 
             var path = $('#treeContainer').attr("data-selectedpath");
             var node = getNodeForPath(this.getRoot(), path);
-            this.activateKey(node.data.key);
+
+            if(this.getActiveNode().data.key == node.data.key) {
+                this.reactivate();
+            }
+            else {
+                this.activateKey(node.data.key);
+            }
         },
         persist: true
     });
