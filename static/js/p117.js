@@ -362,12 +362,12 @@ $(document).ready(function () {
 
     $('#mainTree').dynatree({
         onActivate: function(node) {
-            displaySelectedPage(node.data.pageId);
-        },
-        onClick: function(node, event) {
-            if(node.getEventTargetType(event) == "title"){
+            if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
                 window.location.pathname = "/mainpage?Path="+path+"&predicateId="+1;
+            }
+            else {
+                displaySelectedPage(node.data.pageId);
             }
         },
         initAjax: {
