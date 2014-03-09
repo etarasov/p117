@@ -357,15 +357,16 @@ $(document).ready(function () {
     //$("div.Content").click(clickTreeItem);
     //selectFirstItem();
 
+    var loadedPredicateId = $('#treeContainer').attr("data-predicateid");
+
     $('#predicateSelect').change(changePredicateSelectHandler);
 
 
     $('#mainTree').dynatree({
         onActivate: function(node) {
-            console.log(node.tree.isUserEvent());
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
-                window.location.pathname = "/mainpage?Path="+path+"&predicateId="+1;
+                window.location.pathname = "/mainpage?Path="+path+"&predicateId="+loadedPredicateId;
             }
             else {
                 displaySelectedPage(node.data.pageId);
@@ -374,10 +375,10 @@ $(document).ready(function () {
         initAjax: {
             url: "/mainpage/tree",
             data: {
-                predicateId: "1"
+                predicateId: loadedPredicateId
             },
         },
-        cookieId: "117_maintree",
+        cookieId: "117_maintree_" + loadedPredicateId,
         onPostInit: function(isReloading, isError) {
             if(!isReloading) {
                 this.visit(function(n) {
@@ -388,11 +389,13 @@ $(document).ready(function () {
             var path = $('#treeContainer').attr("data-selectedpath");
             var node = getNodeForPath(this.getRoot(), path);
 
-            if(this.getActiveNode().data.key == node.data.key) {
-                this.reactivate();
+            var activeNode = this.getActiveNode();
+
+            if (activeNode == null || activeNode.data.key != node.data.key) {
+                this.activateKey(node.data.key);
             }
             else {
-                this.activateKey(node.data.key);
+                this.reactivate();
             }
         },
         persist: true
