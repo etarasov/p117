@@ -334,9 +334,12 @@ $(document).ready(function () {
     };
 
     function changePredicateSelectHandler () {
+        var oldPredicate = $('#treeContainer').attr("data-predicateid");
         var newPredicate = $('#predicateSelect').val();
-        $('#mainTree').attr("data-predicateid", newPredicate);
-        reloadTree();
+
+        if (oldPredicate != newPredicate) {
+            window.location.pathname = "/mainpage?predicateId="+newPredicate;
+        }
     };
 
     function selectFirstItem() {

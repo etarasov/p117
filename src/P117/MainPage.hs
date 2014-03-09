@@ -111,8 +111,14 @@ pageHandlerGet = do
 
         where
         predicateOption :: Integer -> (Integer, String) -> Html
-        predicateOption selectedId (pId, pName) = do
-            H.option ! A.value (fromString $ show pId) $ fromString pName
+        predicateOption selectedId (pId, pName) =
+            let res = H.option ! A.value (fromString $ show pId) $ fromString pName
+            in
+            if selectedId == pId
+            then
+                res ! A.selected "true"
+            else
+                res
 
 pageHandlerPost :: ServerPartT (ErrorT String IO) Response
 pageHandlerPost = undefined
