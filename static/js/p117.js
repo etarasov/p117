@@ -389,8 +389,23 @@ $(document).ready(function () {
                 });
             }
 
+            // 1. Get path
+
             var path = $('#treeContainer').attr("data-selectedpath");
+
+            // if path is empty, look it up in cookies
+
+            if (typeof path === "undefined" || path == "") {
+                path = $.cookie('path_for_'+loadedPredicateId);
+            }
+
+            // 2. Try to find node by path
+            // TODO: handle error
             var node = getNodeForPath(this.getRoot(), path);
+
+            // 3. TODO: Try to find first real node if necessary
+
+            // 4. Activate node
 
             var activeNode = this.getActiveNode();
 
@@ -400,6 +415,10 @@ $(document).ready(function () {
             else {
                 this.reactivate();
             }
+
+            // 5. Set cookie
+
+            $.cookie('path_for_'+loadedPredicateId, path, { expires: 30 });
         },
         persist: true
     });
