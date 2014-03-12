@@ -86,7 +86,7 @@ $(document).ready(function () {
                 success: function (ans) {
                     if (ans == "ok") {
                         displaySelectedPage(selectedItemId);
-                        $('div.Content[data-pageid="'+selectedItemId+'"] > span.ItemText').html(titleParam[0].value);
+                        $('#mainTree').dynatree("getTree").reload();
                     }
                     else {
                     }
@@ -116,11 +116,16 @@ $(document).ready(function () {
         var selectedItemId = path.split(";")[path.split(";").length - 1];
 
         // Get id of page parent in the tree. It's used when create new page at the same level as selected page.
-        var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
+        // TODO: it's a code for previous js tree widget
+        //var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
+
+        var selectedNode = $('#mainTree').dynatree('getTree').getActiveNode();
+        var selectedNodeParent = selectedNode.getParent();
+        var selectedNodeParentPageId = selectedNodeParent.data.pageId;
 
         function submitPage () {
             var str = $("#addForm").serialize();
-            str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId+"&parentId="+parentSelectedItemId;
+            str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId+"&parentId="+selectedNodeParentPageId;
             $.ajax({
                 type: "POST",
                 url: "/mainpage/addpage",
@@ -130,9 +135,7 @@ $(document).ready(function () {
                 success: function (ans) {
                     if (ans[0] == "ok") {
                         var pageId = ans[1];
-                        // reload tree
-                        reloadTree();
-                        // TODO: select page pageId
+                        $('#mainTree').dynatree("getTree").reload();
                     }
                     else
                     {
