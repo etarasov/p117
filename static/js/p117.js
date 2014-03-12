@@ -28,21 +28,6 @@ $(document).ready(function () {
         return res;
     };
 
-    function getPathForItemId (itemId) {
-        var divElement = $("div[data-itemid="+itemId+"]")[0];
-
-        var pathBegin = divElement.getAttribute("data-pageid");
-
-        if ($(divElement).parent().hasClass("IsRoot")) {
-            return pathBegin
-        }
-        else {
-            parentDivElement = $(divElement).parent().parent().siblings("div.Content")[0];
-            nextId = parentDivElement.getAttribute("data-itemid");
-            return (getPathForItemId (nextId) + "_" + pathBegin)
-        }
-    }
-
     function getPathForNode (node) {
         var pathBegin = node.data.pageId;
         var res;
@@ -82,168 +67,6 @@ $(document).ready(function () {
 
         return res;
     }
-
-    function getItemIdForPath (path) {
-        pathElems = path.split("_");
-        rootElemId = pathElems.shift();
-        // 1. Find root element
-        rootElemList = $("li.IsRoot > div.Content[data-pageid="+rootElemId+"]");
-        if (rootElemList.length == 0) {
-            alert("there is no root for path " + path);
-        }
-        rootElem = rootElemList[0];
-
-        // 2. Find other elements (divs)
-        nextElem = rootElem;
-        for (i in pathElems) {
-            // 2.1. Find "Container"
-            container = $(nextElem).siblings("ul.Container")[0];
-
-            // 2.2 Find a li element that has a child - a div with Content class and data-pageid=pathElems[i] attribute
-            nextDiv = null;
-            lis = $(container).children();
-            for (j=0; j < lis.length; j = j + 1) {
-                a = $(lis[j]).children("div.Content[data-pageid="+pathElems[i]+"]");
-                if (a.length > 0) {
-                    nextDiv = a[0];
-                }
-            }
-            if (nextDiv == null) {
-                alert("there is no path " + path);
-            }
-            else {
-                nextElem = nextDiv;
-            }
-        }
-        // 3. The last element in the list is the div we need
-        return $(nextElem).attr("data-itemid");
-    }
-
-    function getDeepestItemIdForPath (path) {
-        pathElems = path.split("_");
-        rootElemId = pathElems.shift();
-        // 1. Find root element
-        rootElemList = $("li.IsRoot > div.Content[data-pageid="+rootElemId+"]");
-        if (rootElemList.length == 0) {
-            alert("there is no root for path " + path);
-        }
-        rootElem = rootElemList[0];
-
-        // 2. Find other elements (divs)
-        nextElem = rootElem;
-        for (i in pathElems) {
-            // 2.1. Find "Container"
-            container = $(nextElem).siblings("ul.Container")[0];
-
-            // 2.2 Find a li element that has a child - a div with Content class and data-pageid=pathElems[i] attribute
-            nextDiv = null;
-            lis = $(container).children();
-            for (j=0; j < lis.length; j = j + 1) {
-                a = $(lis[j]).children("div.Content[data-pageid="+pathElems[i]+"]");
-                if (a.length > 0) {
-                    nextDiv = a[0];
-                }
-            }
-            if (nextDiv == null) {
-                return $(nextElem).attr("data-itemid");
-            }
-            else {
-                nextElem = nextDiv;
-            }
-        }
-        // 3. The last element in the list is the div we need
-        return $(nextElem).attr("data-itemid");
-    }
-
-    function clickTreeItem () {
-        var pageId = this.getAttribute("data-pageid");
-        var itemId = this.getAttribute("data-itemid");
-
-        path = getPathForItemId(itemId);
-        console.log(path);
-
-        //debug
-        item = getItemIdForPath(path);
-        console.log(item);
-
-        selectTreeItemById(itemId);
-        displaySelectedPage(pageId);
-    }
-
-    function selectTreeItemById (itemId) {
-        var path = getPathForItemId(itemId);
-        var selectedPath = $("#mainTree").attr("data-selectedPath");
-
-        if (path != selectedPath) {
-            if (selectedPath != -1) {
-                var selectedItemId = getItemIdForPath(selectedPath);
-                $('div.Content[data-itemid="'+selectedItemId+'"]').removeClass("SelectedItem");
-            }
-
-            $('#mainTree').attr("data-selectedPath", path);
-            $('div.Content[data-itemid="'+itemId+'"]').addClass("SelectedItem");
-            // TODO: раскрыть всю ветвь
-        }
-    };
-
-    function selectTreeItemByPath (path) {
-        var itemId = getItemIdForPath(path);
-        selectTreeItemById(itemId);
-    }
-
-    function reloadTree () {
-        var path = $('#mainTree').attr("data-selectedpath");
-        var predicateId = $('#mainTree').attr("data-predicateid");
-        saveTreeState();
-        $('div#treeContainer').load('/mainpage/tree?predicateId='+predicateId, function () {
-            restoreTreeState();
-            selectTreeItemByPath(path);
-            $("div.Content").click(clickTreeItem);
-        });
-    }
-
-    function saveTreeState () {
-        var getIdState = function (index, element) {
-            var id = $(element).attr("data-pageid");
-            var liElem = $(element).parent();
-            var state;
-            if ($(liElem).hasClass('ExpandOpen')) {
-                state = 'open';
-            }
-            if ($(liElem).hasClass('ExpandClosed')) {
-                state = 'closed';
-            }
-            if ($(liElem).hasClass('ExpandLeaf')) {
-                state = 'leaf';
-            }
-            return {id: id, state: state};
-        };
-        var itemsContent = $('#mainTree').find('div.Content');
-        treeState = itemsContent.map(getIdState);
-    };
-
-    function restoreTreeState () {
-        var restoreIdState = function (index, element) {
-            var id = $(element).attr('data-pageid');
-            var liElem = $(element).parent();
-            for (var i=0; i < treeState.length; i++){
-                if (treeState[i].id == id) {
-                    var state = treeState[i].state;
-                    if (state == "open") {
-                        $(liElem).removeClass("ExpandClosed");
-                        $(liElem).addClass("ExpandOpen");
-                    }
-                    if (state == "closed") {
-                        $(liElem).removeClass("ExpandOpen");
-                        $(liElem).addClass("ExpandClosed");
-                    }
-                }
-            };
-        };
-
-        var itemsContent = $('#mainTree').find('div.Content');
-        itemsContent.map(restoreIdState);
-    };
 
     function editButtonHandler () {
         var path = $('#treeContainer').attr("data-selectedpath");
@@ -342,23 +165,10 @@ $(document).ready(function () {
         }
     };
 
-    function selectFirstItem() {
-        var itemToSelect = $($($('span.ItemText').first()).parent()).attr("data-itemid");
-        var pageToSelect = $($($('span.ItemText').first()).parent()).attr("data-pageid");
-        if (itemToSelect) {
-            selectTreeItemById(itemToSelect);
-            displaySelectedPage(pageToSelect);
-        }
-        else {
-            alert("there are no pages in the predicate yet");
-        }
-    };
-
     //^^^^^^^^^^^^^ Only functions definitions ^^^^^^^^^^^^^^^^^^^^^
 
     var treeState = 0;
     //$("div.Content").click(clickTreeItem);
-    //selectFirstItem();
 
     var loadedPredicateId = $('#treeContainer').attr("data-predicateid");
 
@@ -422,5 +232,4 @@ $(document).ready(function () {
         },
         persist: true
     });
-    console.log(window.location.origin);
 })
