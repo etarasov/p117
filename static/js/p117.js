@@ -246,8 +246,8 @@ $(document).ready(function () {
     };
 
     function editButtonHandler () {
-        var path = $('#mainTree').attr("data-selectedpath");
-        var selectedItemId = path.split("_")[path.split("_").length - 1];
+        var path = $('#treeContainer').attr("data-selectedpath");
+        var selectedItemId = path.split(";")[path.split(";").length - 1];
 
         function submitPage () {
             var str = $("#editForm").serialize();
@@ -287,10 +287,10 @@ $(document).ready(function () {
     };
 
     function addButtonHandler () {
-        var predicateId = $('#mainTree').attr("data-predicateId");
+        var predicateId = $('#treeContainer').attr("data-predicateId");
 
-        var path = $('#mainTree').attr("data-selectedpath");
-        var selectedItemId = path.split("_")[path.split("_").length - 1];
+        var path = $('#treeContainer').attr("data-selectedpath");
+        var selectedItemId = path.split(";")[path.split(";").length - 1];
 
         // Get id of page parent in the tree. It's used when create new page at the same level as selected page.
         var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
@@ -397,28 +397,28 @@ $(document).ready(function () {
 
             if (typeof path === "undefined" || path == "") {
                 path = $.cookie('path_for_'+loadedPredicateId);
-            }
-
-            // 2. Try to find node by path
-            // TODO: handle error
-            var node = getNodeForPath(this.getRoot(), path);
-
-            // 3. TODO: Try to find first real node if necessary
-
-            // 4. Activate node
-
-            var activeNode = this.getActiveNode();
-
-            if (activeNode == null || activeNode.data.key != node.data.key) {
-                this.activateKey(node.data.key);
+                window.location.pathname = "/mainpage?Path="+path+"&predicateId="+loadedPredicateId;
             }
             else {
-                this.reactivate();
+                var node = getNodeForPath(this.getRoot(), path);
+
+                // 3. TODO: Try to find first real node if necessary
+
+                // 4. Activate node
+
+                var activeNode = this.getActiveNode();
+
+                if (activeNode == null || activeNode.data.key != node.data.key) {
+                    this.activateKey(node.data.key);
+                }
+                else {
+                    this.reactivate();
+                }
+
+                // 5. Set cookie
+
+                $.cookie('path_for_'+loadedPredicateId, path, { expires: 30 });
             }
-
-            // 5. Set cookie
-
-            $.cookie('path_for_'+loadedPredicateId, path, { expires: 30 });
         },
         persist: true
     });
