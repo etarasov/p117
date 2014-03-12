@@ -29,8 +29,8 @@ CREATE TABLE pages (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title text,
 text text );
-INSERT INTO "pages" VALUES(1,'What is P117','<p>P117 is a notes management software. It stores a set of "pages" and allows to edit them.
-<p>In some way it is like wiki application, because pages can be edited in place. History of changes and wiki markup could be implemented in the future.
+INSERT INTO "pages" VALUES(1,'What is P117','<p>P117 is a notes management application. It stores a set of "pages" and allows to edit them.
+<p>In some way it is like wiki software, because pages can be edited in place. Unlike conventional wiki systems, P117 provides a new approach to maintaining a logical structure of pages.
 <p>Another related thing is mindmaps. Like mindmaps, P117 is designed to maintain complicated logical links between pages.');
 INSERT INTO "pages" VALUES(2,'How pages are stored','<p>Basically, pages are stored in database as an unordered set.
 
