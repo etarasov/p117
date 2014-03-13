@@ -164,7 +164,7 @@ $(document).ready(function () {
         var newPredicate = $('#predicateSelect').val();
 
         if (oldPredicate != newPredicate) {
-            window.location.pathname = "/mainpage?predicateId="+newPredicate;
+            window.location.search = "?predicateId="+newPredicate;
         }
     };
 
@@ -182,7 +182,7 @@ $(document).ready(function () {
         onActivate: function(node) {
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
-                window.location.pathname = "/mainpage?Path="+path+"&predicateId="+loadedPredicateId;
+                window.location.search = "?Path="+path+"&predicateId="+loadedPredicateId;
             }
             else {
                 displaySelectedPage(node.data.pageId);
@@ -210,7 +210,7 @@ $(document).ready(function () {
 
             if (typeof path === "undefined" || path == "") {
                 path = $.cookie('path_for_'+loadedPredicateId);
-                window.location.pathname = "/mainpage?Path="+path+"&predicateId="+loadedPredicateId;
+                window.location.search = "?Path="+path+"&predicateId="+loadedPredicateId;
             }
             else {
                 var node = getNodeForPath(this.getRoot(), path);
