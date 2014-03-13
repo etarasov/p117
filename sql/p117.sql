@@ -29,14 +29,14 @@ CREATE TABLE pages (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title text,
 text text );
-INSERT INTO "pages" VALUES(1,'What is P117','<p>P117 is a notes management application. It stores a set of "pages" and allows to edit them.
-<p>In some way it is like wiki software, because pages can be edited in place. Unlike conventional wiki systems, P117 provides a new approach to maintaining a logical structure of pages.
-<p>Another related thing is mindmaps. Like mindmaps, P117 is designed to maintain complicated logical links between pages.');
+INSERT INTO "pages" VALUES(1,'What is P117','<p>P117 is a notes management application. It stores a set of "pages" and allows to edit them. Pages are linked together explicitly and link stucture is displayed in separate tree view.
+<p>In some way it is like wiki software, because pages can be edited in place. Unlike conventional wiki systems, P117 provides different approach to maintaining logical structure of pages.
+<p>Another related thing is mindmaps. Like mindmaps, P117 is designed to maintain logical links between pages in convenient way.');
 INSERT INTO "pages" VALUES(2,'How pages are stored','<p>Basically, pages are stored in database as an unordered set.
 
-<p>What makes a structure like what is on the left side from this text is structure <b>predicates</b>.
+<p>There are <b>structure predicates</b> which makes a structure of that pages.
 
-<p>You can think of them like predicates in Prolog language. There''re some ''facts'' in database which connect pages together like facts in Prolog which connects Prolog terms:
+<p>They are like predicates in Prolog language. There''re some ''facts'' in database which connect pages together like facts in Prolog which connects Prolog terms:
 <pre>
 About(-1, ''What is P117'').
 About(-1, ''Similar things'').
@@ -48,9 +48,9 @@ About(''Similar things'', ''Confluence).
 
 <p>There could be many predicates that form different structures for the same set of pages. All predicates are listed in the combobox which is above the tree widget.
 
-<p>A single page can be attached to different places at the same page structure like "Confluence" page, which is attached to both "Wiki software" and "Similar things".
+<p>A single page can appear at different places like "Confluence" page, which is attached to both "Wiki software" and "Similar things".
 
-This page is attached to both "About" and "Get started" structures, because it is related logically.');
+<p>This current page is attached to both "About" and "Get started" structures. It often makes sense to link a page to many places because it is related logically.');
 INSERT INTO "pages" VALUES(3,'Technologies','');
 INSERT INTO "pages" VALUES(4,'How to build and run P117','<ol>
 <li>Install <a href="http://www.haskell.org/platform/">Haskell Platform</a>
@@ -85,7 +85,7 @@ cabal-dev install
 INSERT INTO "pages" VALUES(5,'Page5','Please write page text');
 INSERT INTO "pages" VALUES(6,'Node6','Please write page text');
 INSERT INTO "pages" VALUES(7,'Page7','Please write page text');
-INSERT INTO "pages" VALUES(8,'Mindmaps','<p>Mindmaps allows to express complicated logical structures.
+INSERT INTO "pages" VALUES(8,'Mindmaps','<p>Mindmaps allows to express sophisticated logical structures.
 However, it''s usually hard to attach big text to mindmap nodes.
 <p>Number and connectivity of logical links are restricted by graphical representation of the graph.');
 INSERT INTO "pages" VALUES(9,'Page9','Please write page text
@@ -97,21 +97,21 @@ asdfsaf
 asdfasfd');
 INSERT INTO "pages" VALUES(10,'Similar things','');
 INSERT INTO "pages" VALUES(11,'Dynatree','<a href="https://code.google.com/p/dynatree/">https://code.google.com/p/dynatree/</a>');
-INSERT INTO "pages" VALUES(12,'Wiki software','<p>Wiki software usually doesn''t support fixed structure for a set of pages. Logical structure of information is implemented using ''wiki-links''.
+INSERT INTO "pages" VALUES(12,'Wiki software','<p>In wiki software, logical structure of information is usually implemented using ''wiki links''. 
 
-<p>This approach makes it hard to keep in mind a whole structure of pages.
+<p>This approach makes it hard to keep in mind designed structure of documentation. Refactoring of wiki structure is often a tricky task, because the whole picture is behind the scene.
 
 <p>However, there are plugins which provide a tree widget with a hierarchical structure of pages.');
-INSERT INTO "pages" VALUES(13,'Knowledge bases','<p>Like knowledge bases, P117 deals with structured information.
+INSERT INTO "pages" VALUES(13,'Knowledge bases','<p>Knowledge bases deal with structured information.
 
-<p>But formal knowledge bases are designed for automated reasoning and information extraction. That imposes fixed structure on content data and logical links.
+<p>They are designed for automated reasoning and information extraction. That imposes fixed structure on content data and logical links.
 
 <p>P117 doesn''t imply any automated processing of stored data. Its model is just convenient way to store human readable data and logical links.');
 INSERT INTO "pages" VALUES(14,'Confluence','<p><a href="https://www.atlassian.com/software/confluence/">Atlassian Confluence</a> is a great wiki software.
 
-<p>Unlike other wikis, it has a fixed structure of pages and convenient page tree pane, which makes easier to maintain documentation.
+<p>Unlike other wikis, it has explicit hierarchical structure of pages and convenient tree view, which makes easier to maintain documentation.
 
-<p>However, it''s quite expensive for more than 10 users by license and maintenance cost. It aims to enterprise environments and has a lot of features which are not very usefull for simple use cases. It requires very fast hardware and a lot of RAM to operate.');
+<p>However, the software is quite expensive for more than 10 users by license and maintenance cost. It aims to enterprise environments and has a lot of auxiliary features. It requires very fast hardware and a lot of RAM to operate.');
 DELETE FROM sqlite_sequence;
 INSERT INTO "sqlite_sequence" VALUES('pages',14);
 INSERT INTO "sqlite_sequence" VALUES('binary',2);
