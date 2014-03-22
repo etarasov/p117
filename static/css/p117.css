@@ -2,11 +2,14 @@ div#treeBlock {
     float: left;
     width: 20%;
 }
-div.SelectedItem {
-    text-decoration: underline;
+
+div#treeBlock2 {
+    float: left;
+    width: 20%;
 }
 
 div#pageText {
-    margin-left: 20%;
+    float: left;
+    width: 60%;
     /*border: solid 1px;*/
 }

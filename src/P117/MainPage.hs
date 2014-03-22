@@ -107,6 +107,14 @@ pageHandlerGet = do
                   ! dataAttribute "predicateId" (fromString $ show predicateId)
                   $
                 H.div ! A.id "mainTree" $ ""
+        H.div ! A.id "treeBlock2" $ do
+            H.select ! A.id "predicateSelect2" ! A.name "predicate2" $ do
+                mapM_ (predicateOption predicateId) predicates
+            H.div ! A.id "treeContainer2"
+                  ! dataAttribute "selectedPath" (fromString pathStr)
+                  ! dataAttribute "predicateId" (fromString $ show predicateId)
+                  $
+                H.div ! A.id "tree2" $ ""
         H.div ! A.id "pageText" $ ""
 
         where

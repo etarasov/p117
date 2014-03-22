@@ -233,6 +233,54 @@ $(document).ready(function () {
                 $.cookie('path_for_'+loadedPredicateId, path, { expires: 30 });
             }
         },
-        persist: true
+        persist: true,
+        dnd: {
+            onDragStart: function (node) {
+                logMsg("tree.onDragStart(%o)", node);
+                return true;
+            },
+            onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+                //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
+                console.log("onDrop:");
+                console.log(node);
+                console.log(sourceNode);
+                console.log(ui);
+                console.log(draggable);
+                //sourceNode.move(node,hitMode);
+            },
+            onDragEnter: function (targetNode, sourceNode, ui, draggable) {
+                return true;
+            }
+        }
+    });
+
+    $('#tree2').dynatree({
+        initAjax: {
+            url: "/mainpage/tree",
+            data: {
+                predicateId: 1
+            },
+        },
+        cookieId: "117_tree2_" + "undefined",
+        persist: true,
+        dnd: {
+            onDragStart: function (node) {
+                logMsg("tree.onDragStart(%o)", node);
+                return true;
+            },
+            onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+                //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
+
+                console.log("onDrop:");
+                console.log(node);
+                console.log(sourceNode);
+                console.log(ui);
+                console.log(draggable);
+                //sourceNode.move(node,hitMode);
+            },
+            onDragEnter: function (targetNode, sourceNode, ui, draggable) {
+                return true;
+            }
+        }
     });
 })
