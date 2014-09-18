@@ -25,6 +25,7 @@ INSERT INTO "binaryTrue" VALUES(18,1,'10','14');
 INSERT INTO "binaryTrue" VALUES(19,2,'-1','2');
 INSERT INTO "binaryTrue" VALUES(20,2,'-1','4');
 INSERT INTO "binaryTrue" VALUES(21,3,'-1','4');
+INSERT INTO "binaryTrue" VALUES(22,3,'-1','15');
 CREATE TABLE pages (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title text,
@@ -112,8 +113,12 @@ INSERT INTO "pages" VALUES(14,'Confluence','<p><a href="https://www.atlassian.co
 <p>Unlike other wikis, it has explicit hierarchical structure of pages and convenient tree view, which makes easier to maintain documentation.
 
 <p>However, the software is quite expensive for more than 10 users by license and maintenance cost. It aims to enterprise environments and has a lot of auxiliary features. It requires very fast hardware and a lot of RAM to operate.');
+INSERT INTO "pages" VALUES(15,'How to update p117.sql','<pre>
+$ sqlite3 test.db .dump > tmp.sql
+$ mv tmp.sql p117.sql
+</pre>');
 DELETE FROM sqlite_sequence;
-INSERT INTO "sqlite_sequence" VALUES('pages',14);
+INSERT INTO "sqlite_sequence" VALUES('pages',15);
 INSERT INTO "sqlite_sequence" VALUES('binary',2);
-INSERT INTO "sqlite_sequence" VALUES('binaryTrue',17);
+INSERT INTO "sqlite_sequence" VALUES('binaryTrue',22);
 COMMIT;
