@@ -100,16 +100,36 @@ pageHandlerGet = do
 
     return $ buildResponse $ do
         H.div ! A.id "treeBlock" $ do
+            H.input ! A.type_ "radio"
+                    ! A.name "predicateRadio1"
+                    ! A.value "custom"
+                    ! A.class_ "predicateRadio1"
             H.select ! A.id "predicateSelect" ! A.name "predicate" $ do
                 mapM_ (predicateOption predicateId) predicates
+            H.br
+            H.input ! A.type_ "radio"
+                    ! A.name "predicateRadio1"
+                    ! A.value "allpages"
+                    ! A.class_ "predicateRadio1"
+            "All pages"
             H.div ! A.id "treeContainer"
                   ! dataAttribute "selectedPath" (fromString pathStr)
                   ! dataAttribute "predicateId" (fromString $ show predicateId)
                   $
                 H.div ! A.id "mainTree" $ ""
         H.div ! A.id "treeBlock2" $ do
+            H.input ! A.type_ "radio"
+                    ! A.name "predicateRadio2"
+                    ! A.value "custom"
+                    ! A.class_ "predicateRadio2"
             H.select ! A.id "predicateSelect2" ! A.name "predicate2" $ do
                 mapM_ (predicateOption predicateId) predicates
+            H.br
+            H.input ! A.type_ "radio"
+                    ! A.name "predicateRadio2"
+                    ! A.value "allpages"
+                    ! A.class_ "predicateRadio2"
+            "All pages"
             H.div ! A.id "treeContainer2"
                   ! dataAttribute "selectedPath" (fromString pathStr)
                   ! dataAttribute "predicateId" (fromString $ show predicateId)

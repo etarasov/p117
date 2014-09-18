@@ -184,6 +184,14 @@ $(document).ready(function () {
 
     $('#predicateSelect').change(changePredicateSelectHandler);
 
+    $(".predicateRadio1").bind("click", function () {
+        alert( "predicateRadio1 " + $(this).attr("value") );
+    })
+
+    $(".predicateRadio2").bind("click", function () {
+        alert( "predicateRadio2 " + $(this).attr("value") );
+    })
+
 
     $('#mainTree').dynatree({
         onActivate: function(node) {
