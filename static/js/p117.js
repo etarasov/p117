@@ -6,7 +6,7 @@ $(document).ready(function () {
     };
 
     var ajaxError = function (x,t,m) {
-        alert('Server connection error');
+        alert('Server connection error: '+ t + m);
     };
 
     function displaySelectedPage (pageId) {
@@ -121,10 +121,17 @@ $(document).ready(function () {
 
         var selectedNode = $('#mainTree').dynatree('getTree').getActiveNode();
         var selectedNodeParent = selectedNode.getParent();
-        var selectedNodeParentPageId = selectedNodeParent.data.pageId;
+
+        if (selectedNodeParent.getLevel() == 0) {
+            var selectedNodeParentPageId = -1;
+        }
+        else {
+            var selectedNodeParentPageId = selectedNodeParent.data.pageId;
+        }
 
         function submitPage () {
             var str = $("#addForm").serialize();
+
             str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId+"&parentId="+selectedNodeParentPageId;
             $.ajax({
                 type: "POST",
