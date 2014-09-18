@@ -26,6 +26,7 @@ INSERT INTO "binaryTrue" VALUES(19,2,'-1','2');
 INSERT INTO "binaryTrue" VALUES(20,2,'-1','4');
 INSERT INTO "binaryTrue" VALUES(21,3,'-1','4');
 INSERT INTO "binaryTrue" VALUES(22,3,'-1','15');
+INSERT INTO "binaryTrue" VALUES(23,3,'-1','16');
 CREATE TABLE pages (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title text,
@@ -117,8 +118,29 @@ INSERT INTO "pages" VALUES(15,'How to update p117.sql','<pre>
 $ sqlite3 test.db .dump > tmp.sql
 $ mv tmp.sql p117.sql
 </pre>');
+INSERT INTO "pages" VALUES(16,'Url parameters','<ul>
+<li>
+<b>Path1</b> - path in the first tree (left)
+</li>
+<li>
+<b>PredicateType1</b> - what predicate is selected for the first tree. <br>Possible values: "custom", "allpages".
+</li>
+<li>
+<b>CustomPredicate1</b> - what custom predicate is selected for the first tree. <br>Only if PredicateType1 == "custom"
+</li>
+<li>
+<b>Path2</b> - path in the second tree (right)
+</li>
+<li>
+<b>PredicateType2</b> - what predicate is selected for the second tree.
+</li>
+<li>
+<b>CustomPredicate2</b> - what custom predicate is selected for the first tree. <br>Only if PredicateType2 == "custom"
+</li>
+</ul>
+');
 DELETE FROM sqlite_sequence;
-INSERT INTO "sqlite_sequence" VALUES('pages',15);
+INSERT INTO "sqlite_sequence" VALUES('pages',16);
 INSERT INTO "sqlite_sequence" VALUES('binary',2);
-INSERT INTO "sqlite_sequence" VALUES('binaryTrue',22);
+INSERT INTO "sqlite_sequence" VALUES('binaryTrue',23);
 COMMIT;
