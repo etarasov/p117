@@ -99,7 +99,7 @@ pageHandlerGet = do
     predicates <- lift getPredicates
 
     return $ buildResponse $ do
-        H.div ! A.id "treeBlock" $ do
+        H.div ! A.id "treeBlock1" $ do
             H.input ! A.type_ "radio"
                     ! A.name "predicateRadio1"
                     ! A.value "custom"
