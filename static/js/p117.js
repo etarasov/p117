@@ -69,7 +69,7 @@ $(document).ready(function () {
     }
 
     function editButtonHandler () {
-        var path = $('#treeContainer').attr("data-selectedpath");
+        var path = $('#treeContainer1').attr("data-selectedpath");
         var selectedItemId = path.split(";")[path.split(";").length - 1];
 
         function submitPage () {
@@ -110,9 +110,9 @@ $(document).ready(function () {
     };
 
     function addButtonHandler () {
-        var predicateId = $('#treeContainer').attr("data-predicateId");
+        var predicateId = $('#treeContainer1').attr("data-predicateId");
 
-        var path = $('#treeContainer').attr("data-selectedpath");
+        var path = $('#treeContainer1').attr("data-selectedpath");
         var selectedItemId = path.split(";")[path.split(";").length - 1];
 
         // Get id of page parent in the tree. It's used when create new page at the same level as selected page.
@@ -167,7 +167,7 @@ $(document).ready(function () {
     };
 
     function changePredicateSelectHandler () {
-        var oldPredicate = $('#treeContainer').attr("data-predicateid");
+        var oldPredicate = $('#treeContainer1').attr("data-predicateid");
         var newPredicate = $('#predicateSelect').val();
 
         if (oldPredicate != newPredicate) {
@@ -180,7 +180,7 @@ $(document).ready(function () {
     var treeState = 0;
     //$("div.Content").click(clickTreeItem);
 
-    var loadedPredicateId = $('#treeContainer').attr("data-predicateid");
+    var loadedPredicateId = $('#treeContainer1').attr("data-predicateid");
 
     $('#predicateSelect').change(changePredicateSelectHandler);
 
@@ -219,7 +219,7 @@ $(document).ready(function () {
 
             // 1. Get path
 
-            var path = $('#treeContainer').attr("data-selectedpath");
+            var path = $('#treeContainer1').attr("data-selectedpath");
 
             // if path is empty, look it up in cookies
 

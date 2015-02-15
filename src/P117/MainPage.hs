@@ -112,7 +112,7 @@ pageHandlerGet = do
                     ! A.value "allpages"
                     ! A.class_ "predicateRadio1"
             "All pages"
-            H.div ! A.id "treeContainer"
+            H.div ! A.id "treeContainer1"
                   ! dataAttribute "selectedPath" (fromString pathStr)
                   ! dataAttribute "predicateId" (fromString $ show predicateId)
                   $
