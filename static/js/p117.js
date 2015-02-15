@@ -175,7 +175,7 @@ $(document).ready(function () {
         }
     };
 
-    //^^^^^^^^^^^^^ Only functions definitions ^^^^^^^^^^^^^^^^^^^^^
+    //^^^^^^^^^^^^^ Only function definitions ^^^^^^^^^^^^^^^^^^^^^
 
     var treeState = 0;
     //$("div.Content").click(clickTreeItem);
