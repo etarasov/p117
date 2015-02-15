@@ -63,38 +63,49 @@ getBinaryPredicates = undefined
 
 pageHandlerGet :: ServerPartT (ErrorT String IO) Response
 pageHandlerGet = do
-    -- Input: predicateId, path
-    -- Output: predicateId in DOM + select control with predicates
-    --         path in DOM
-    -- if no predicate, look for random predicate in db
-    -- if on path, return null path in DOM and client will ask for the path later
+    -- Input: 
+    --      PredicateType1
+    --      CustomPredicate1
+    --      Path1
+    --      PredicateType2
+    --      CustomPredicate2
+    --      Path2
+    --
+    -- Output:
+    --      Main page in html
+    --          Constructed select controls for both trees
+    --          Predicate ids are written to DOM of tree controls
+    --          Paths are written to DOM of tree controls
+    --
+    --          Tree controls are constructed later at additional requests to server
+    --
+    -- if no predicate, look for any predicate in db
+    -- if no path, return null path in DOM and client will ask for the path later
+    --
 
-    predicateMay <- getInputReadMay "predicateId"
+    predicate1May <- getInputReadMay "CustomPredicate1"
 
-    predicateId <- lift $ bracket (liftIO $ connectSqlite3 "sql/test.db")
-                                  (liftIO . disconnect)
-                                  $ \ conn -> do
-        let getMinimumIdPredicate :: IConnection conn => conn -> ErrorT String IO Integer
-            getMinimumIdPredicate conn = do
-                r <- liftIO $ quickQuery' conn "SELECT min(id) FROM binary" []
-                let predicateIdM = headMay r >>= headMay
-                maybe (throwError "Predicate table is empty") (return . fromSql) predicateIdM
-
-        case predicateMay of
+    predicate1Id <- case predicate1May of
             Nothing ->
-                getMinimumIdPredicate conn
+                lift getMinimumIdPredicate
             Just predicateId -> do
-                let _ = predicateId :: Integer
-                -- Check that predicate exist
-                r <- liftIO $ quickQuery' conn "SELECT count(*) FROM binary where id == ?" [toSql predicateId]
-                let countM = headMay r >>= headMay
-                count <- maybe (throwError "error 4") (return . fromSql) countM
-                if ((count :: Integer) < 1)
-                    then throwError $ "Predicate " ++ show predicateId ++ " doesn't exist"
-                    else return predicateId
+                lift $ verifyPredicateId predicateId
 
-    pathMay <- getInputStringMay "Path"
-    let pathStr = maybe "" id pathMay
+    path1May <- getInputStringMay "Path1"
+    let path1Str = maybe "" id path1May
+
+
+    predicate2May <- getInputReadMay "CustomPredicate2"
+
+    predicate2Id <- case predicate2May of
+            Nothing ->
+                lift getMinimumIdPredicate
+            Just predicateId -> do
+                lift $ verifyPredicateId predicateId
+
+    path2May <- getInputStringMay "Path2"
+    let path2Str = maybe "" id path2May
+
 
     predicates <- lift getPredicates
 
@@ -105,7 +116,7 @@ pageHandlerGet = do
                     ! A.value "custom"
                     ! A.class_ "predicateRadio1"
             H.select ! A.id "predicateSelect" ! A.name "predicate" $ do
-                mapM_ (predicateOption predicateId) predicates
+                mapM_ (predicateOption predicate1Id) predicates
             H.br
             H.input ! A.type_ "radio"
                     ! A.name "predicateRadio1"
@@ -113,8 +124,8 @@ pageHandlerGet = do
                     ! A.class_ "predicateRadio1"
             "All pages"
             H.div ! A.id "treeContainer1"
-                  ! dataAttribute "selectedPath" (fromString pathStr)
-                  ! dataAttribute "predicateId" (fromString $ show predicateId)
+                  ! dataAttribute "selectedPath" (fromString path1Str)
+                  ! dataAttribute "predicateId" (fromString $ show predicate1Id)
                   $
                 H.div ! A.id "mainTree" $ ""
         H.div ! A.id "treeBlock2" $ do
@@ -123,7 +134,7 @@ pageHandlerGet = do
                     ! A.value "custom"
                     ! A.class_ "predicateRadio2"
             H.select ! A.id "predicateSelect2" ! A.name "predicate2" $ do
-                mapM_ (predicateOption predicateId) predicates
+                mapM_ (predicateOption predicate2Id) predicates
             H.br
             H.input ! A.type_ "radio"
                     ! A.name "predicateRadio2"
@@ -131,8 +142,8 @@ pageHandlerGet = do
                     ! A.class_ "predicateRadio2"
             "All pages"
             H.div ! A.id "treeContainer2"
-                  ! dataAttribute "selectedPath" (fromString pathStr)
-                  ! dataAttribute "predicateId" (fromString $ show predicateId)
+                  ! dataAttribute "selectedPath" (fromString path2Str)
+                  ! dataAttribute "predicateId" (fromString $ show predicate2Id)
                   $
                 H.div ! A.id "tree2" $ ""
         H.div ! A.id "pageText" $ ""
