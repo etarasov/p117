@@ -115,7 +115,7 @@ pageHandlerGet = do
                     ! A.name "predicateRadio1"
                     ! A.value "custom"
                     ! A.class_ "predicateRadio1"
-            H.select ! A.id "predicateSelect" ! A.name "predicate" $ do
+            H.select ! A.id "predicateSelect1" ! A.name "predicate" $ do
                 mapM_ (predicateOption predicate1Id) predicates
             H.br
             H.input ! A.type_ "radio"

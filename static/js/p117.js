@@ -168,7 +168,7 @@ $(document).ready(function () {
 
     function changePredicateSelectHandler () {
         var oldPredicate = $('#treeContainer1').attr("data-predicateid");
-        var newPredicate = $('#predicateSelect').val();
+        var newPredicate = $('#predicateSelect1').val();
 
         if (oldPredicate != newPredicate) {
             window.location.search = "?CustomPredicate1="+newPredicate;
@@ -182,7 +182,7 @@ $(document).ready(function () {
 
     var loadedPredicateId = $('#treeContainer1').attr("data-predicateid");
 
-    $('#predicateSelect').change(changePredicateSelectHandler);
+    $('#predicateSelect1').change(changePredicateSelectHandler);
 
     $(".predicateRadio1").bind("click", function () {
         alert( "predicateRadio1 " + $(this).attr("value") );
