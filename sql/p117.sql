@@ -56,7 +56,6 @@ About(''Similar things'', ''Confluence).
 INSERT INTO "pages" VALUES(3,'Technologies','');
 INSERT INTO "pages" VALUES(4,'How to build and run P117','<ol>
 <li>Install <a href="http://www.haskell.org/platform/">Haskell Platform</a>
-<li>Install <a href="http://hackage.haskell.org/package/cabal-dev">cabal-dev</a>
 <li>Install sqlite binary and dynamic libraries. For Fedora:
 <pre>
 yum install sqlite-devel sqlite
@@ -66,9 +65,11 @@ yum install sqlite-devel sqlite
 > git clone https://github.com/etarasov/p117.git
 > cd p117
 </pre>
-<li>Build the project and all its dependencies in sandbox:
+<li>Install project dependencies and build the application in sandbox:
 <pre>
-cabal-dev install
+cabal sandbox init
+cabal install --only-dependencies
+cabal build
 </pre>
 <li>Initialize database:
 <pre>
