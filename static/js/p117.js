@@ -234,7 +234,8 @@ $(document).ready(function () {
     var treeState = 0;
     //$("div.Content").click(clickTreeItem);
 
-    var loadedPredicateId = $('#treeContainer1').attr("data-predicateid");
+    var loadedPredicate1Id = $('#treeContainer1').attr("data-predicateid");
+    var loadedPredicate2Id = $('#treeContainer2').attr("data-predicateid");
 
     $('#predicateSelect1').change(changePredicateSelectHandler1);
     $('#predicateSelect2').change(changePredicateSelectHandler2);
@@ -254,10 +255,8 @@ $(document).ready(function () {
                 var path = getPathForNode(node);
                 url1 = window.location.search;
                 url2 = setUrlParameter(url1, "Path1", path);
-                url3 = setUrlParameter(url2, "CustomPredicate1", loadedPredicateId);
+                url3 = setUrlParameter(url2, "CustomPredicate1", loadedPredicate1Id);
                 window.location.search = url3;
-
-                //window.location.search = "?Path1="+path+"&CustomPredicate1="+loadedPredicateId;
             }
             else {
                 displaySelectedPage(node.data.pageId);
@@ -266,10 +265,10 @@ $(document).ready(function () {
         initAjax: {
             url: "/mainpage/tree",
             data: {
-                predicateId: loadedPredicateId
+                predicateId: loadedPredicate1Id
             },
         },
-        cookieId: "117_maintree_" + loadedPredicateId,
+        cookieId: "117_maintree_" + loadedPredicate1Id,
         onPostInit: function(isReloading, isError) {
             if(!isReloading) {
                 this.visit(function(n) {
@@ -284,11 +283,11 @@ $(document).ready(function () {
             // if path is empty, look it up in cookies
 
             if (typeof path === "undefined" || path == "") {
-                path = $.cookie('path_for_'+loadedPredicateId);
+                path = $.cookie('path_for_'+loadedPredicate1Id);
 
                 url1 = window.location.search;
                 url2 = setUrlParameter(url1, "Path1", path);
-                url3 = setUrlParameter(url2, "CustomPredicate1", loadedPredicateId);
+                url3 = setUrlParameter(url2, "CustomPredicate1", loadedPredicate1Id);
                 window.location.search = url3;
             }
             else {
@@ -309,7 +308,7 @@ $(document).ready(function () {
 
                 // 5. Set cookie
 
-                $.cookie('path_for_'+loadedPredicateId, path, { expires: 30 });
+                $.cookie('path_for_'+loadedPredicate1Id, path, { expires: 30 });
             }
         },
         persist: true,
@@ -334,13 +333,67 @@ $(document).ready(function () {
     });
 
     $('#tree2').dynatree({
+        onActivate: function(node) {
+            if(node.tree.isUserEvent()){
+                var path = getPathForNode(node);
+                url1 = window.location.search;
+                url2 = setUrlParameter(url1, "Path2", path);
+                url3 = setUrlParameter(url2, "CustomPredicate2", loadedPredicate2Id);
+                window.location.search = url3;
+            }
+            else {
+                displaySelectedPage(node.data.pageId);
+            }
+        },
         initAjax: {
             url: "/mainpage/tree",
             data: {
-                predicateId: 1
+                predicateId: loadedPredicate2Id
             },
         },
-        cookieId: "117_tree2_" + "undefined",
+        cookieId: "117_tree2_" + loadedPredicate2Id,
+        onPostInit: function(isReloading, isError) {
+            if(!isReloading) {
+                this.visit(function(n) {
+                    n.expand(true);
+                });
+            }
+
+            // 1. Get path
+
+            var path = $('#treeContainer2').attr("data-selectedpath");
+
+            // if path is empty, look it up in cookies
+
+            if (typeof path === "undefined" || path == "") {
+                path = $.cookie('path_for_'+loadedPredicate2Id);
+
+                url1 = window.location.search;
+                url2 = setUrlParameter(url1, "Path2", path);
+                url3 = setUrlParameter(url2, "CustomPredicate2", loadedPredicate2Id);
+                window.location.search = url3;
+            }
+            else {
+                var node = getNodeForPath(this.getRoot(), path);
+
+                // 3. TODO: Try to find first real node if necessary
+
+                // 4. Activate node
+
+                var activeNode = this.getActiveNode();
+
+                if (activeNode == null || activeNode.data.key != node.data.key) {
+                    this.activateKey(node.data.key);
+                }
+                else {
+                    this.reactivate();
+                }
+
+                // 5. Set cookie
+
+                $.cookie('path_for_'+loadedPredicate2Id, path, { expires: 30 });
+            }
+        },
         persist: true,
         dnd: {
             onDragStart: function (node) {
