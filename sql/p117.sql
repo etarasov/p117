@@ -27,6 +27,7 @@ INSERT INTO "binaryTrue" VALUES(20,2,'-1','4');
 INSERT INTO "binaryTrue" VALUES(21,3,'-1','4');
 INSERT INTO "binaryTrue" VALUES(22,3,'-1','15');
 INSERT INTO "binaryTrue" VALUES(23,3,'-1','16');
+INSERT INTO "binaryTrue" VALUES(24,1,'10','17');
 CREATE TABLE pages (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title text,
@@ -55,8 +56,7 @@ About(''Similar things'', ''Confluence).
 <p>This current page is attached to both "About" and "Get started" structures. It often makes sense to link a page to many places because it is related logically.');
 INSERT INTO "pages" VALUES(3,'Technologies','');
 INSERT INTO "pages" VALUES(4,'How to build and run P117','<ol>
-<li>Install <a href="http://www.haskell.org/platform/">Haskell Platform</a>
-<li>Install sqlite binary and dynamic libraries. For Fedora:
+<li>Install <a href="http://www.haskell.org/platform/">Haskell Platform</a><li>Install sqlite binary and dynamic libraries. For Fedora:
 <pre>
 yum install sqlite-devel sqlite
 </pre>
@@ -140,8 +140,13 @@ INSERT INTO "pages" VALUES(16,'Url parameters','<ul>
 </li>
 </ul>
 ');
+INSERT INTO "pages" VALUES(17,'Outliners','<p>Outliner is a tool for organizing a hierarchy of items:<br>
+<a href="https://en.wikipedia.org/wiki/Outliner">https://en.wikipedia.org/wiki/Outliner</a>
+<p>List of some outliners are here:<br>
+<a href="http://www.marktaw.com/reviews/Outliners.html">http://www.marktaw.com/reviews/Outliners.html</a>
+<p>P117 is like outliner in that is has hierarchy of items and provide tree user interface control to manage them. However, hierarchy in P117 is arbitrary graph(with some technical restrictions in early versions), not just tree. On top of that, the same set of items can be used in many different graphs.');
 DELETE FROM sqlite_sequence;
-INSERT INTO "sqlite_sequence" VALUES('pages',16);
+INSERT INTO "sqlite_sequence" VALUES('pages',17);
 INSERT INTO "sqlite_sequence" VALUES('binary',2);
-INSERT INTO "sqlite_sequence" VALUES('binaryTrue',23);
+INSERT INTO "sqlite_sequence" VALUES('binaryTrue',24);
 COMMIT;
