@@ -10,7 +10,7 @@ $(document).ready(function () {
     };
 
     function displaySelectedPage (pageId) {
-        var res = "ok"
+        var res = "ok";
         $.ajax({
             type: "GET",
             url: "/mainpage/page",
@@ -23,7 +23,7 @@ $(document).ready(function () {
             success: function (ans) {
                 $('#pageText').html(ans);
                 rebuttonButtons();
-            },
+            }
         });
         return res;
     };
@@ -86,7 +86,7 @@ $(document).ready(function () {
                 success: function (ans) {
                     if (ans == "ok") {
                         displaySelectedPage(selectedItemId);
-                        $('#mainTree').dynatree("getTree").reload();
+                        $('#tree1').dynatree("getTree").reload();
                     }
                     else {
                     }
@@ -119,7 +119,7 @@ $(document).ready(function () {
         // TODO: it's a code for previous js tree widget
         //var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
 
-        var selectedNode = $('#mainTree').dynatree('getTree').getActiveNode();
+        var selectedNode = $('#tree1').dynatree('getTree').getActiveNode();
         var selectedNodeParent = selectedNode.getParent();
 
         if (selectedNodeParent.getLevel() == 0) {
@@ -142,7 +142,7 @@ $(document).ready(function () {
                 success: function (ans) {
                     if (ans[0] == "ok") {
                         var pageId = ans[1];
-                        $('#mainTree').dynatree("getTree").reload();
+                        $('#tree1').dynatree("getTree").reload();
                     }
                     else
                     {
@@ -248,9 +248,9 @@ $(document).ready(function () {
         alert( "predicateRadio2 " + $(this).attr("value") );
     })
 
-
-    $('#mainTree').dynatree({
+    $('#tree1').dynatree({
         onActivate: function(node) {
+            console.log('onAct1', "isUserEvent?", node.tree.isUserEvent());
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
                 url1 = window.location.search;
@@ -266,9 +266,9 @@ $(document).ready(function () {
             url: "/mainpage/tree",
             data: {
                 predicateId: loadedPredicate1Id
-            },
+            }
         },
-        cookieId: "117_maintree_" + loadedPredicate1Id,
+        cookieId: "117_tree1_" + loadedPredicate1Id,
         onPostInit: function(isReloading, isError) {
             if(!isReloading) {
                 this.visit(function(n) {
@@ -334,6 +334,7 @@ $(document).ready(function () {
 
     $('#tree2').dynatree({
         onActivate: function(node) {
+            console.log('onAct2', "isUserEvent?", node.tree.isUserEvent());
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
                 url1 = window.location.search;
@@ -415,4 +416,6 @@ $(document).ready(function () {
             }
         }
     });
-})
+
+
+});

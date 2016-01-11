@@ -4,27 +4,27 @@ module P117.MainPage.Tree where
 
 import Control.Exception.Lifted
 import Control.Monad.Error
-import Control.Monad.State.Lazy
-import Data.Maybe
-import Data.Monoid
-import Data.String
+
+
+
+
 import Data.Tree
 import Database.HDBC
-import Database.HDBC.Sqlite3
+
 import Happstack.Server
 import P117.DBAccess
 import P117.Types
-import Safe
-import Text.Blaze
-import Text.Blaze.Html
-import qualified Text.Blaze.Html5 as H
-import qualified Text.Blaze.Html5.Attributes as A
+
+
+
+
+
 import Text.JSON
 
 {-
 treeToHtml :: Integer -> [Tree TreeItem] -> Html
 treeToHtml predicateId branches = do
-    H.div ! A.id "mainTree"
+    H.div ! A.id "tree1"
           ! dataAttribute "selectedPath" "-1"
           ! dataAttribute "predicateId" (fromString $ show predicateId)
           ! A.onclick "tree_toggle(arguments[0])"

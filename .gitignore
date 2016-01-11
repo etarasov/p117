@@ -4,3 +4,4 @@ cabal-dev
 cabal.sandbox.config
 *.swp
 sql/test.db
+.stack-work

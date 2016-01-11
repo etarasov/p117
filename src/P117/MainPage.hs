@@ -5,7 +5,7 @@ module P117.MainPage where
 import Control.Exception.Lifted
 import Control.Monad.Error
 import Data.String
-import Data.Tree
+
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Happstack.Server
@@ -14,10 +14,10 @@ import qualified P117.MainPage.EditPage as EditPage
 import qualified P117.MainPage.AddPage as AddPage
 import P117.MainPage.Tree
 import P117.Utils
-import Safe
+
 import Text.Blaze
 import Text.Blaze.Html
-import Text.Blaze.Internal
+
 import Text.JSON
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
@@ -40,7 +40,7 @@ getPage = do
         r <- liftIO $ quickQuery' conn "SELECT title,text FROM pages WHERE id == ?" [toSql (pageId :: Integer)]
         let convRow :: [SqlValue] -> (String, String)
             convRow [titleRaw, textRaw] = (fromSql titleRaw, fromSql textRaw)
-        when (null r) $ throwError $ "Page with id " ++ show pageId ++ " was not found"
+        when (Prelude.null r) $ throwError $ "Page with id " ++ show pageId ++ " was not found"
         return $ convRow $ head r
 
     return $ toResponse $ do
@@ -127,7 +127,7 @@ pageHandlerGet = do
                   ! dataAttribute "selectedPath" (fromString path1Str)
                   ! dataAttribute "predicateId" (fromString $ show predicate1Id)
                   $
-                H.div ! A.id "mainTree" $ ""
+                H.div ! A.id "tree1" $ ""
         H.div ! A.id "treeBlock2" $ do
             H.input ! A.type_ "radio"
                     ! A.name "predicateRadio2"
