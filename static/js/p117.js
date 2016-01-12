@@ -22,6 +22,7 @@ $(document).ready(function () {
             },
             success: function (ans) {
                 $('#pageText').html(ans);
+                $('#pageText').data('page-id', pageId);
                 rebuttonButtons();
             }
         });
@@ -69,8 +70,7 @@ $(document).ready(function () {
     }
 
     function editButtonHandler () {
-        var path = $('#treeContainer1').attr("data-selectedpath");
-        var selectedItemId = path.split(";")[path.split(";").length - 1];
+        var selectedItemId = $('#pageText').data('page-id');
 
         function submitPage () {
             var str = $("#editForm").serialize();
@@ -87,10 +87,12 @@ $(document).ready(function () {
                     if (ans == "ok") {
                         displaySelectedPage(selectedItemId);
                         $('#tree1').dynatree("getTree").reload();
+                        $('#tree2').dynatree("getTree").reload();
                     }
                     else {
+                        alert(ans);
                     }
-                },
+                }
             });
 
         };
@@ -105,7 +107,7 @@ $(document).ready(function () {
                 $('#pageText').html(ans);
                 $('#previewButton').button();
                 $('#submitButton').button().click(submitPage);
-            },
+            }
         });
     };
 
