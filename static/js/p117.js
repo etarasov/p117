@@ -257,13 +257,13 @@ $(document).ready(function () {
                 var url1 = window.location.search;
                 var url2 = setUrlParameter(url1, "Path1", path);
                 var url3 = setUrlParameter(url2, "CustomPredicate1", loadedPredicate1Id);
-                var url4 = setUrlParameter(url3, "lastTree", 1);
-                $.cookie('last_tree', 1, { expires: 30 });
+                var url4 = setUrlParameter(url3, "activeTree", 1);
+                $.cookie('active_tree', 1, { expires: 30 });
                 window.location.search = url4;
             }
             else {
                 var req = URLToArray(window.location.search);
-                var ltree = req.lastTree || $.cookie('last_tree');
+                var ltree = req.activeTree || $.cookie('active_tree');
                 if(ltree === '1') displaySelectedPage(node.data.pageId);
             }
         },
@@ -344,13 +344,13 @@ $(document).ready(function () {
                 var url1 = window.location.search;
                 var url2 = setUrlParameter(url1, "Path2", path);
                 var url3 = setUrlParameter(url2, "CustomPredicate2", loadedPredicate2Id);
-                var url4 = setUrlParameter(url3, "lastTree", 2);
-                $.cookie('last_tree', 2, { expires: 30 });
+                var url4 = setUrlParameter(url3, "activeTree", 2);
+                $.cookie('active_tree', 2, { expires: 30 });
                 window.location.search = url4;
             }
             else {
                 var req = URLToArray(window.location.search);
-                var ltree = req.lastTree || $.cookie('last_tree');
+                var ltree = req.activeTree || $.cookie('active_tree');
                 if(ltree === '2') displaySelectedPage(node.data.pageId);
             }
         },
