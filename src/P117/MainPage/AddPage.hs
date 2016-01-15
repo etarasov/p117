@@ -4,9 +4,9 @@ module P117.MainPage.AddPage where
 
 import Control.Exception.Lifted
 import Control.Monad.Error
-import Data.Maybe
+
 import Data.String
-import Data.Tree
+
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Happstack.Server

@@ -12,23 +12,26 @@ Category:       Application
 
 Executable p117
     Build-Depends:  base >=4 && <5,
-                    happstack-server >=7.3 && <7.4,
+                    happstack-server >=7.4 && <7.5,
                     mtl >= 1.1,
                     safe >= 0.3,
                     network >= 2.2 && < 3,
-                    hsyslog >= 1.4 && < 2,
-                    blaze-html >= 0.6 && < 0.7,
-                    blaze-markup >= 0.5 && < 0.6,
+                    hsyslog >= 1.4 && < 2.1,
+                    blaze-html >= 0.6 && < 0.9,
+                    blaze-markup >= 0.5 && < 0.8,
                     HDBC          == 2.4.*,
                     HDBC-sqlite3  == 2.3.*,
                     containers    >= 0.5 && < 0.6,
-                    monad-control == 0.3.*,
-                    json          >= 0.4 && < 0.6,
+                    monad-control == 1.0.*,
+                    json          >= 0.4 && < 1.0,
                     lifted-base   >= 0.2 && < 0.3
     Main-Is:        Main.hs
     Other-modules:  P117.MainPage
                     P117.MainPage.Tree
                     P117.Utils
                     P117.DBAccess
+                    P117.MainPage.AddPage
+                    P117.MainPage.EditPage
+                    P117.Types
     Hs-Source-Dirs: src
     Ghc-Options:    -threaded -Wall -fno-warn-unused-do-bind
