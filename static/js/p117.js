@@ -253,6 +253,9 @@ $(document).ready(function () {
     });
 
     $('#tree1').dynatree({
+        onClick: function(node) {
+            this.reactivate();
+        },
         onActivate: function(node) {
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
@@ -340,6 +343,9 @@ $(document).ready(function () {
     });
 
     $('#tree2').dynatree({
+        onClick: function(node) {
+            this.reactivate();
+        },
         onActivate: function(node) {
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
