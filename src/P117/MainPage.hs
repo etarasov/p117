@@ -2,23 +2,24 @@
 
 module P117.MainPage where
 
-import Control.Exception.Lifted
-import Control.Monad.Error
-import Data.String
+import           Control.Exception.Lifted
+import           Control.Monad.Error
+import           Data.Monoid
+import           Data.String
 
-import Database.HDBC
-import Database.HDBC.Sqlite3
-import Happstack.Server
-import P117.DBAccess
+import           Database.HDBC
+import           Database.HDBC.Sqlite3
+import           Happstack.Server
+import           P117.DBAccess
 import qualified P117.MainPage.EditPage as EditPage
 import qualified P117.MainPage.AddPage as AddPage
-import P117.MainPage.Tree
-import P117.Utils
+import           P117.MainPage.Tree
+import           P117.Utils
 
-import Text.Blaze
-import Text.Blaze.Html
+import           Text.Blaze
+import           Text.Blaze.Html
 
-import Text.JSON
+import           Text.JSON
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
@@ -106,22 +107,24 @@ pageHandlerGet = do
     path2May <- getInputStringMay "Path2"
     let path2Str = maybe "" id path2May
 
+    displayMode1Str <- getInputStringMay "DisplayMode1" >>= return . maybe "custom" id
+    displayMode2Str <- getInputStringMay "DisplayMode2" >>= return . maybe "custom" id
 
     predicates <- lift getPredicates
 
     return $ buildResponse $ do
+        let inputRadio n v = H.input ! A.type_ "radio"
+                                     ! A.name ("predicateRadio" <> n)
+                                     ! A.value v
+                                     ! A.class_ ("predicateRadio" <> n)
+        let inputRadioChecked n v c =
+              if c then (inputRadio n v ! A.checked "checked") else inputRadio n v
         H.div ! A.id "treeBlock1" $ do
-            H.input ! A.type_ "radio"
-                    ! A.name "predicateRadio1"
-                    ! A.value "custom"
-                    ! A.class_ "predicateRadio1"
+            inputRadioChecked "1" "custom" (displayMode1Str == "custom")
             H.select ! A.id "predicateSelect1" ! A.name "predicate" $ do
                 mapM_ (predicateOption predicate1Id) predicates
             H.br
-            H.input ! A.type_ "radio"
-                    ! A.name "predicateRadio1"
-                    ! A.value "allpages"
-                    ! A.class_ "predicateRadio1"
+            inputRadioChecked "1" "allpages" (displayMode1Str == "allpages")
             "All pages"
             H.div ! A.id "treeContainer1"
                   ! dataAttribute "selectedPath" (fromString path1Str)
@@ -129,17 +132,11 @@ pageHandlerGet = do
                   $
                 H.div ! A.id "tree1" $ ""
         H.div ! A.id "treeBlock2" $ do
-            H.input ! A.type_ "radio"
-                    ! A.name "predicateRadio2"
-                    ! A.value "custom"
-                    ! A.class_ "predicateRadio2"
+            inputRadioChecked "2" "custom" (displayMode2Str == "custom")
             H.select ! A.id "predicateSelect2" ! A.name "predicate2" $ do
                 mapM_ (predicateOption predicate2Id) predicates
             H.br
-            H.input ! A.type_ "radio"
-                    ! A.name "predicateRadio2"
-                    ! A.value "allpages"
-                    ! A.class_ "predicateRadio2"
+            inputRadioChecked "2" "allpages" (displayMode2Str == "allpages")
             "All pages"
             H.div ! A.id "treeContainer2"
                   ! dataAttribute "selectedPath" (fromString path2Str)
