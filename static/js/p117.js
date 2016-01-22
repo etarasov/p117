@@ -57,7 +57,7 @@ $(document).ready(function () {
             var pathElems = path.split(";");
             var rootElem = pathElems.shift();
 
-            var children = root.getChildren();
+            var children = root.getChildren() || [];
             for (var i=0; i < children.length; i++) {
                 if (children[i].data.pageId == rootElem) {
                     res = getNodeForPath(children[i], pathElems.join(";"));
@@ -173,7 +173,7 @@ $(document).ready(function () {
         var url1 = window.location.search;
         var oldPredicate = $('#treeContainer'+n).attr("data-predicateid");
         var newPredicate = $('#predicateSelect'+n).val();
-        var mode = getUrlParameter(url1, "DisplayMode" + n);
+        var mode = $('input[name=predicateRadio'+n+']:checked').val();
 
         if (mode === 'custom' && oldPredicate != newPredicate) {
             var url2 = setUrlParameter(url1, "CustomPredicate"+n, newPredicate);
@@ -279,7 +279,8 @@ $(document).ready(function () {
         initAjax: {
             url: "/mainpage/tree",
             data: {
-                predicateId: loadedPredicate1Id
+                predicateId: loadedPredicate1Id,
+                displayMode: $('input[name=predicateRadio1]:checked').val()
             }
         },
         cookieId: "117_tree1_" + loadedPredicate1Id,
@@ -313,7 +314,7 @@ $(document).ready(function () {
 
                 var activeNode = this.getActiveNode();
 
-                if (activeNode == null || (node && activeNode.data.key != node.data.key)) {
+                if (node && (activeNode == null || activeNode.data.key != node.data.key)) {
                     this.activateKey(node.data.key);
                 }
                 else {
@@ -369,7 +370,8 @@ $(document).ready(function () {
         initAjax: {
             url: "/mainpage/tree",
             data: {
-                predicateId: loadedPredicate2Id
+                predicateId: loadedPredicate2Id,
+                displayMode: $('input[name=predicateRadio2]:checked').val()
             }
         },
         cookieId: "117_tree2_" + loadedPredicate2Id,
@@ -403,7 +405,7 @@ $(document).ready(function () {
 
                 var activeNode = this.getActiveNode();
 
-                if (activeNode == null || (node && activeNode.data.key != node.data.key)) {
+                if (node && (activeNode == null || activeNode.data.key != node.data.key)) {
                     this.activateKey(node.data.key);
                 }
                 else {

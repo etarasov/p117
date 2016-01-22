@@ -169,3 +169,15 @@ getTreeForPredicate predicateId = do
             children <- mapM (buildTreeFromRoot conn predicateId) childrenId
             -- 4. Возвращаем всё дерево
             return $ Node (TreeItem rootTitle rootId) children
+
+getFlatTree :: ServerPartT (ErrorT String IO) (Forest TreeItem)
+getFlatTree = do
+    lift $ bracket (liftIO p117Connect)
+                   (liftIO . disconnect)
+                   $ \conn -> do
+        r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2, p.title FROM binaryTrue b JOIN pages p ON p.id == b.value2 ORDER BY b.value2" []
+        let convRow :: [SqlValue] -> (Integer, String)
+            convRow [v, t] = (fromSql v, fromSql t)
+        let rootPages = map convRow r
+        let rootPages' = map (\(v,t) -> Node (TreeItem t v) []) rootPages
+        return rootPages'

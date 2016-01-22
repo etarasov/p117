@@ -55,7 +55,8 @@ getPage = do
 getTree :: ServerPartT (ErrorT String IO) Response
 getTree = do
     predicateId <- getInputRead "predicateId"
-    tree <- getTreeForPredicate predicateId
+    displayModeStr <- getInputStringMay "displayMode" >>= return . maybe "custom" id
+    tree <- if displayModeStr == "custom" then getTreeForPredicate predicateId else getFlatTree
     return $ toResponse $ encode $ treeToJSON tree
 
 -- | Get predicates list for rendering in select control with js
