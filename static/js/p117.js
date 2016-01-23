@@ -57,7 +57,7 @@ $(document).ready(function () {
             var pathElems = path.split(";");
             var rootElem = pathElems.shift();
 
-            var children = root.getChildren();
+            var children = root.getChildren() || [];
             for (var i=0; i < children.length; i++) {
                 if (children[i].data.pageId == rootElem) {
                     res = getNodeForPath(children[i], pathElems.join(";"));
@@ -169,29 +169,28 @@ $(document).ready(function () {
         });
     };
 
-    function changePredicateSelectHandler1 () {
-        var oldPredicate = $('#treeContainer1').attr("data-predicateid");
-        var newPredicate = $('#predicateSelect1').val();
+    function changePredicateSelectHandler (n) {
+        var url1 = window.location.search;
+        var oldPredicate = $('#treeContainer'+n).attr("data-predicateid");
+        var newPredicate = $('#predicateSelect'+n).val();
+        var mode = $('input[name=predicateRadio'+n+']:checked').val();
 
-        if (oldPredicate != newPredicate) {
-            var url1 = window.location.search;
-            var url2 = setUrlParameter(url1, "CustomPredicate1", newPredicate);
-            var url3 = removeUrlParameter(url2, "Path1");
+        if (mode === 'custom' && oldPredicate != newPredicate) {
+            var url2 = setUrlParameter(url1, "CustomPredicate"+n, newPredicate);
+            var url3 = removeUrlParameter(url2, "Path"+n);
             window.location.search = url3;
         }
     };
 
-    function changePredicateSelectHandler2 () {
-        var oldPredicate = $('#treeContainer2').attr("data-predicateid");
-        var newPredicate = $('#predicateSelect2').val();
-
-        if (oldPredicate != newPredicate) {
-            var url1 = window.location.search;
-            var url2 = setUrlParameter(url1, "CustomPredicate2", newPredicate);
-            var url3 = removeUrlParameter(url2, "Path2");
-            window.location.search = url3;
-        }
-    };
+    function changePredicateRadioHandler(n, v) {
+        var newPredicate = $('#predicateSelect'+n).val();
+        var url1 = window.location.search;
+        var url2 = setUrlParameter(url1, "DisplayMode" + n, v);
+        var url3 = (v === 'custom') ?
+                setUrlParameter(url2, "CustomPredicate"+n, newPredicate) :
+                removeUrlParameter(url2, "CustomPredicate" + n);
+        window.location.search = url3;
+    }
 
     function URLToArray(url) {
       var request = {};
@@ -224,6 +223,11 @@ $(document).ready(function () {
         return ArrayToURL(params);
     }
 
+    function getUrlParameter(url, parameter) {
+        var params = URLToArray(url);
+        return params[parameter];
+    }
+
 
 
     //^^^^^^^^^^^^^ Only function definitions ^^^^^^^^^^^^^^^^^^^^^
@@ -241,38 +245,42 @@ $(document).ready(function () {
     var loadedPredicate1Id = $('#treeContainer1').attr("data-predicateid");
     var loadedPredicate2Id = $('#treeContainer2').attr("data-predicateid");
 
-    $('#predicateSelect1').change(changePredicateSelectHandler1);
-    $('#predicateSelect2').change(changePredicateSelectHandler2);
+    $('#predicateSelect1').change(function() { changePredicateSelectHandler('1'); });
+    $('#predicateSelect2').change(function() { changePredicateSelectHandler('2'); });
 
     $(".predicateRadio1").bind("click", function () {
-        alert( "predicateRadio1 " + $(this).attr("value") );
+        changePredicateRadioHandler("1", $(this).attr("value"));
     });
 
     $(".predicateRadio2").bind("click", function () {
-        alert( "predicateRadio2 " + $(this).attr("value") );
+        changePredicateRadioHandler("2", $(this).attr("value"));
     });
 
     $('#tree1').dynatree({
+        onClick: function(node) {
+            this.reactivate();
+        },
         onActivate: function(node) {
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
                 var url1 = window.location.search;
                 var url2 = setUrlParameter(url1, "Path1", path);
                 var url3 = setUrlParameter(url2, "CustomPredicate1", loadedPredicate1Id);
-                var url4 = setUrlParameter(url3, "activeTree", 1);
+                var url4 = setUrlParameter(url3, "ActiveTree", 1);
                 $.cookie('active_tree', 1, { expires: 30 });
                 window.location.search = url4;
             }
             else {
                 var req = URLToArray(window.location.search);
-                var ltree = req.activeTree || $.cookie('active_tree');
+                var ltree = req.ActiveTree || $.cookie('active_tree');
                 if(ltree === '1') displaySelectedPage(node.data.pageId);
             }
         },
         initAjax: {
             url: "/mainpage/tree",
             data: {
-                predicateId: loadedPredicate1Id
+                predicateId: loadedPredicate1Id,
+                displayMode: $('input[name=predicateRadio1]:checked').val()
             }
         },
         cookieId: "117_tree1_" + loadedPredicate1Id,
@@ -306,7 +314,7 @@ $(document).ready(function () {
 
                 var activeNode = this.getActiveNode();
 
-                if (activeNode == null || activeNode.data.key != node.data.key) {
+                if (node && (activeNode == null || activeNode.data.key != node.data.key)) {
                     this.activateKey(node.data.key);
                 }
                 else {
@@ -340,26 +348,30 @@ $(document).ready(function () {
     });
 
     $('#tree2').dynatree({
+        onClick: function(node) {
+            this.reactivate();
+        },
         onActivate: function(node) {
             if(node.tree.isUserEvent()){
                 var path = getPathForNode(node);
                 var url1 = window.location.search;
                 var url2 = setUrlParameter(url1, "Path2", path);
                 var url3 = setUrlParameter(url2, "CustomPredicate2", loadedPredicate2Id);
-                var url4 = setUrlParameter(url3, "activeTree", 2);
+                var url4 = setUrlParameter(url3, "ActiveTree", 2);
                 $.cookie('active_tree', 2, { expires: 30 });
                 window.location.search = url4;
             }
             else {
                 var req = URLToArray(window.location.search);
-                var ltree = req.activeTree || $.cookie('active_tree');
+                var ltree = req.ActiveTree || $.cookie('active_tree');
                 if(ltree === '2') displaySelectedPage(node.data.pageId);
             }
         },
         initAjax: {
             url: "/mainpage/tree",
             data: {
-                predicateId: loadedPredicate2Id
+                predicateId: loadedPredicate2Id,
+                displayMode: $('input[name=predicateRadio2]:checked').val()
             }
         },
         cookieId: "117_tree2_" + loadedPredicate2Id,
@@ -393,7 +405,7 @@ $(document).ready(function () {
 
                 var activeNode = this.getActiveNode();
 
-                if (activeNode == null || activeNode.data.key != node.data.key) {
+                if (node && (activeNode == null || activeNode.data.key != node.data.key)) {
                     this.activateKey(node.data.key);
                 }
                 else {

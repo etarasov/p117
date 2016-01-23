@@ -13,3 +13,10 @@ div#pageText {
     width: 60%;
     /*border: solid 1px;*/
 }
+
+
+ul.dynatree-container span:not(.dynatree-active) a:focus
+{
+	background: none !important;
+	outline: none !important;
+}
