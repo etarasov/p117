@@ -66,6 +66,7 @@ pageHandlerPost = do
     parentId <- getInputRead "parentId"
     predicateId <- getInputRead "predicateId"
     let _ = relativePageId + predicateId + parentId :: Integer
+    displayMode <- getInputString "displayMode"
     insertPosition <- getInputString "insertPosition"
     title <- getInputString "title"
     text <- getInputString "text"
@@ -79,7 +80,7 @@ pageHandlerPost = do
         let r' = headMay r >>= headMay
         pageId <- maybe (throwError "error getting id of new created page") (return . fromSql) r'
         let _ = pageId :: Integer
-        case insertPosition of
+        when (displayMode == "custom") $ void $ case insertPosition of
             "inside" -> do
                 liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, ?, ?)" [toSql predicateId, toSql relativePageId, toSql pageId]
             "after" -> do

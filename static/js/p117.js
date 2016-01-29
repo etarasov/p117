@@ -112,16 +112,21 @@ $(document).ready(function () {
     };
 
     function addButtonHandler () {
-        var predicateId = $('#treeContainer1').attr("data-predicateId");
+        var req = URLToArray(window.location.search);
+        var ltree = req.ActiveTree || '1';
+        var predicateId = $('#treeContainer'+ltree).attr("data-predicateId");
+        var displayMode = $('input[name=predicateRadio'+ltree+']:checked').val();
 
-        var path = $('#treeContainer1').attr("data-selectedpath");
-        var selectedItemId = path.split(";")[path.split(";").length - 1];
+        // TODO remove this ?
+        //var path = $('#treeContainer'+ltree).attr("data-selectedpath");
+        //var selectedItemId = path.split(";")[path.split(";").length - 1];
 
         // Get id of page parent in the tree. It's used when create new page at the same level as selected page.
         // TODO: it's a code for previous js tree widget
         //var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
 
-        var selectedNode = $('#tree1').dynatree('getTree').getActiveNode();
+        var selectedNode = $('#tree'+ltree).dynatree('getTree').getActiveNode();
+        var selectedItemId = selectedNode.data.pageId;
         var selectedNodeParent = selectedNode.getParent();
         var selectedNodeParentPageId;
 
@@ -135,7 +140,7 @@ $(document).ready(function () {
         function submitPage () {
             var str = $("#addForm").serialize();
 
-            str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId+"&parentId="+selectedNodeParentPageId;
+            str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId+"&parentId="+selectedNodeParentPageId+"&displayMode="+displayMode;
             $.ajax({
                 type: "POST",
                 url: "/mainpage/addpage",
@@ -146,12 +151,13 @@ $(document).ready(function () {
                     if (ans[0] == "ok") {
                         var pageId = ans[1];
                         $('#tree1').dynatree("getTree").reload();
+                        $('#tree2').dynatree("getTree").reload();
                     }
                     else
                     {
                         alert('Ошибка добавления страницы:'+ans);
                     }
-                },
+                }
             });
         };
 
