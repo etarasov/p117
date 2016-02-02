@@ -175,7 +175,7 @@ getFlatTree = do
     lift $ bracket (liftIO p117Connect)
                    (liftIO . disconnect)
                    $ \conn -> do
-        r <- liftIO $ quickQuery' conn "SELECT DISTINCT value2, p.title FROM binaryTrue b JOIN pages p ON p.id == b.value2 ORDER BY p.title" []
+        r <- liftIO $ quickQuery' conn "SELECT id, title FROM pages ORDER BY title" []
         let convRow :: [SqlValue] -> (Integer, String)
             convRow [v, t] = (fromSql v, fromSql t)
         let rootPages = map convRow r

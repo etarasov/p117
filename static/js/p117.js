@@ -116,11 +116,6 @@ $(document).ready(function () {
         var ltree = req.ActiveTree || '1';
         var predicateId = $('#treeContainer'+ltree).attr("data-predicateId");
         var displayMode = $('input[name=predicateRadio'+ltree+']:checked').val();
-
-        // TODO remove this ?
-        //var path = $('#treeContainer'+ltree).attr("data-selectedpath");
-        //var selectedItemId = path.split(";")[path.split(";").length - 1];
-
         // Get id of page parent in the tree. It's used when create new page at the same level as selected page.
         // TODO: it's a code for previous js tree widget
         //var parentSelectedItemId = $($($($('div.Content[data-pageid="'+selectedItemId+'"]').parent()).parent()).prev()).attr("data-pageid") || -1;
