@@ -193,6 +193,47 @@ $(document).ready(function () {
         window.location.search = url3;
     }
 
+    function onDragOverHandler (targetNode, sourceNode, hitMode, ui, draggable) {
+        if(hitMode !== 'over') {
+            targetNode = targetNode.getParent();
+        }
+        var srcPageId = sourceNode.data.pageId;
+        if(srcPageId === targetNode.data.pageId) return false;
+        if(targetNode.isDescendantOf(sourceNode)) return false;
+        var children = targetNode.getChildren();
+        if(children !== null) {
+            for(var i = 0; i < children.length; i++) {
+                if(children[i].data.pageId === srcPageId) return false;
+            }
+        }
+        return true;
+    }
+
+    function onDropHandler(predicateId, targetNode, sourceNode, hitMode) {
+        var targetPageId = targetNode.data.pageId;
+        if(hitMode !== 'over') targetPageId = targetNode.getParent().data.pageId;
+        if(targetPageId === undefined) targetPageId = -1;
+        $.ajax({
+            type: "POST",
+            url: "/mainpage/copypage",
+            data: "srcPageId="+sourceNode.data.pageId
+                +"&predicateId="+predicateId
+                +"&targetPageId="+targetPageId,
+            dataType: "json",
+            error: ajaxError,
+            success: function (ans) {
+                if(ans && ans[0] === 'error') {
+                    alert("Error: " + ans[1]);
+                }
+                else {
+                    sourceNode.tree.reload();
+                    targetNode.tree.reload();
+                }
+            }
+        });
+    }
+
+
     function URLToArray(url) {
       var request = {};
       var pairs = url.substring(url.indexOf('?') + 1).split('&');
@@ -333,17 +374,13 @@ $(document).ready(function () {
                 logMsg("tree.onDragStart(%o)", node);
                 return true;
             },
-            onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-                //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
-                console.log("onDrop:");
-                console.log(node);
-                console.log(sourceNode);
-                console.log(ui);
-                console.log(draggable);
-                //sourceNode.move(node,hitMode);
+            onDrop: function(targetNode, sourceNode, hitMode, ui, draggable) {
+                onDropHandler(loadedPredicate2Id, targetNode, sourceNode, hitMode);
             },
+            onDragOver: onDragOverHandler,
             onDragEnter: function (targetNode, sourceNode, ui, draggable) {
-                return true;
+                var displayMode = $('input[name=predicateRadio1]:checked').val();
+                return (displayMode === 'allpages') ? false : true;
             }
         }
     });
@@ -421,21 +458,15 @@ $(document).ready(function () {
         persist: true,
         dnd: {
             onDragStart: function (node) {
-                logMsg("tree.onDragStart(%o)", node);
                 return true;
             },
-            onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-                //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
-
-                console.log("onDrop:");
-                console.log(node);
-                console.log(sourceNode);
-                console.log(ui);
-                console.log(draggable);
-                //sourceNode.move(node,hitMode);
+            onDrop: function(targetNode, sourceNode, hitMode, ui, draggable) {
+                onDropHandler(loadedPredicate2Id, targetNode, sourceNode, hitMode);
             },
+            onDragOver: onDragOverHandler,
             onDragEnter: function (targetNode, sourceNode, ui, draggable) {
-                return true;
+                var displayMode = $('input[name=predicateRadio2]:checked').val();
+                return (displayMode === 'allpages') ? false : true;
             }
         }
     });
