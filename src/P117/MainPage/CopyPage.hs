@@ -6,7 +6,6 @@ import Control.Exception.Lifted
 import Control.Monad.Error
 
 
-
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Happstack.Server
@@ -21,8 +20,8 @@ pageHandler :: ServerPartT (ErrorT String IO) Response
 pageHandler = msum [ methodSP POST pageHandlerPost
                    ]
 
-jsonErr :: String -> String
-jsonErr e = encode ("error" :: String, e)
+structuredErr :: String -> String
+structuredErr e = encode ("error" :: String, e)
 
 pageHandlerPost :: ServerPartT (ErrorT String IO) Response
 pageHandlerPost = do
@@ -34,15 +33,15 @@ pageHandlerPost = do
                              $ \ conn -> do
         -- Нельзя копировать страницу к тому же родителю в том же предикате, что и исходная страница, так как такая связь уже есть
         [[cnt]] <- liftIO $ quickQuery' conn "SELECT COUNT(*) FROM binaryTrue WHERE binaryId = ? AND value1 = ? AND value2 = ?"
-                   $ toSql <$> ([predicateId,targetPageId,srcPageId] :: [Int])
-        when ((fromSql cnt :: Int) > 0) $ throwError $ jsonErr "This page already exists with the same parent and predicate"
+                   $ toSql `fmap` ([predicateId,targetPageId,srcPageId] :: [Int])
+        when ((fromSql cnt :: Int) > 0) $ throwError $ structuredErr "This page already exists with the same parent and predicate"
         -- Нельзя копировать страницу внутрь самой себя
-        when (srcPageId == targetPageId) $ throwError $ jsonErr "Can't copy page inside itself"
+        when (srcPageId == targetPageId) $ throwError $ structuredErr "Can't copy page inside itself"
         -- Нельзя копировать страницу внутрь собственных потомков
-        [[cnt1]] <- liftIO $ quickQuery' conn "SELECT COUNT(*) FROM binaryTrue WHERE binaryId = ? AND value1 = ? AND value2 = ?" $ toSql <$> [predicateId, srcPageId, targetPageId]
-        when ((fromSql cnt1 :: Int) > 0) $ throwError $ jsonErr "This parent already a child of this page"
-        -- when srcPageId == targetPageId $ throwError $ jsonErr "Can't copy page inside itself"
-        r <- liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, ?, ?)" $ toSql <$> [predicateId, targetPageId, srcPageId]
+        [[cnt1]] <- liftIO $ quickQuery' conn "SELECT COUNT(*) FROM binaryTrue WHERE binaryId = ? AND value1 = ? AND value2 = ?" $ toSql `fmap` [predicateId, srcPageId, targetPageId]
+        when ((fromSql cnt1 :: Int) > 0) $ throwError $ structuredErr "This parent already a child of this page"
+        -- when srcPageId == targetPageId $ throwError $ structuredErr "Can't copy page inside itself"
+        r <- liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, ?, ?)" $ toSql `fmap` [predicateId, targetPageId, srcPageId]
         liftIO $ commit conn
         return r
 

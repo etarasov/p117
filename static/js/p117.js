@@ -375,7 +375,7 @@ $(document).ready(function () {
                 return true;
             },
             onDrop: function(targetNode, sourceNode, hitMode, ui, draggable) {
-                onDropHandler(loadedPredicate2Id, targetNode, sourceNode, hitMode);
+                onDropHandler(loadedPredicate1Id, targetNode, sourceNode, hitMode);
             },
             onDragOver: onDragOverHandler,
             onDragEnter: function (targetNode, sourceNode, ui, draggable) {
