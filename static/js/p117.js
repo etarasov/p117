@@ -3,6 +3,7 @@ $(document).ready(function () {
     function rebuttonButtons () {
         $("#editButton").button().click(editButtonHandler);
         $("#addButton").button().click(addButtonHandler);
+        $("#delButton").button().click(delButtonHandler);
     };
 
     var ajaxError = function (x,t,m) {
@@ -169,6 +170,59 @@ $(document).ready(function () {
             }
         });
     };
+
+    function delButtonHandler () {
+        var req = URLToArray(window.location.search);
+        var ltree = req.ActiveTree || '1';
+        //var predicateId = $('#treeContainer'+ltree).attr("data-predicateId");
+        var displayMode = $('input[name=predicateRadio'+ltree+']:checked').val();
+
+        var selectedNode = $('#tree'+ltree).dynatree('getTree').getActiveNode();
+        var selectedItemId = selectedNode.data.pageId;
+        var selectedNodeParent = selectedNode.getParent();
+        var selectedNodeParentPageId;
+
+        if (selectedNodeParent.getLevel() == 0) {
+            selectedNodeParentPageId = -1;
+        }
+        else {
+            selectedNodeParentPageId = selectedNodeParent.data.pageId;
+        }
+
+        function submitDeletion () {
+            var mode = $('#delForm > *[name="mode"]').val();
+            var str = "&submit=Submit&pageId="+selectedItemId+"&parentId="+selectedNodeParentPageId+"&mode="+mode;
+            $.ajax({
+                type: "POST",
+                url: "/mainpage/deletepage",
+                data: str,
+                dataType: "json",
+                error: ajaxError,
+                success: function (ans) {
+                    if (ans == "ok") {
+                        $('#tree1').dynatree("getTree").reload();
+                        $('#tree2').dynatree("getTree").reload();
+                    }
+                    else {
+                        alert(ans);
+                    }
+                }
+            });
+
+        };
+
+        
+        $('#pageText').html('<button id="cancelButton">Cancel</button><button id="submitButton">Submit</button><br>' +
+                            '<form id="delForm" method="post">' +
+                            '<select name="mode">'+
+                            (displayMode === 'custom' ? '<option value="rm_link">Remove link</option>' : '')+
+                            '<option value="rm_all_entries">Remove all entries</option>'+
+                            '</select><br></form>');
+        $('#cancelButton').button().click(function() {
+            displaySelectedPage(selectedItemId);
+        });
+        $('#submitButton').button().click(submitDeletion);
+    }
 
     function changePredicateSelectHandler (n) {
         var url1 = window.location.search;

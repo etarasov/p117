@@ -40,7 +40,6 @@ pageHandlerPost = do
         -- Нельзя копировать страницу внутрь собственных потомков
         [[cnt1]] <- liftIO $ quickQuery' conn "SELECT COUNT(*) FROM binaryTrue WHERE binaryId = ? AND value1 = ? AND value2 = ?" $ toSql `fmap` [predicateId, srcPageId, targetPageId]
         when ((fromSql cnt1 :: Int) > 0) $ throwError $ structuredErr "This parent already a child of this page"
-        -- when srcPageId == targetPageId $ throwError $ structuredErr "Can't copy page inside itself"
         r <- liftIO $ run conn "INSERT INTO binaryTrue (binaryId, value1, value2) VALUES (?, ?, ?)" $ toSql `fmap` [predicateId, targetPageId, srcPageId]
         liftIO $ commit conn
         return r

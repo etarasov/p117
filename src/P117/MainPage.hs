@@ -14,6 +14,7 @@ import           P117.DBAccess
 import qualified P117.MainPage.EditPage as EditPage
 import qualified P117.MainPage.AddPage as AddPage
 import qualified P117.MainPage.CopyPage as CopyPage
+import qualified P117.MainPage.DeletePage as DeletePage
 import           P117.MainPage.Tree
 import           P117.Utils
 
@@ -30,6 +31,7 @@ pageHandler = msum [ dir "page" (methodSP GET getPage)
                    , dir "editpage" EditPage.pageHandler
                    , dir "addpage" AddPage.pageHandler
                    , dir "copypage" CopyPage.pageHandler
+                   , dir "deletepage" DeletePage.pageHandler
                    , methodSP GET pageHandlerGet
                    , methodSP POST pageHandlerPost
                    ]
@@ -50,6 +52,7 @@ getPage = do
         H.div ! A.id "buttonBar" $ do
             H.button ! A.id "editButton" $ "Edit"
             H.button ! A.id "addButton" $ "Add"
+            H.button ! A.id "delButton" $ "Delete"
         H.h1 $ fromString title
         preEscapedString text
         return ()
