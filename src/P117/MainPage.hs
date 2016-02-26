@@ -13,6 +13,9 @@ import           Happstack.Server
 import           P117.DBAccess
 import qualified P117.MainPage.EditPage as EditPage
 import qualified P117.MainPage.AddPage as AddPage
+import qualified P117.MainPage.CopyPage as CopyPage
+import qualified P117.MainPage.DeletePage as DeletePage
+import qualified P117.MainPage.AddPredicatePage as AddPredicatePage
 import           P117.MainPage.Tree
 import           P117.Utils
 
@@ -28,6 +31,9 @@ pageHandler = msum [ dir "page" (methodSP GET getPage)
                    , dir "tree" (methodSP GET getTree)
                    , dir "editpage" EditPage.pageHandler
                    , dir "addpage" AddPage.pageHandler
+                   , dir "copypage" CopyPage.pageHandler
+                   , dir "deletepage" DeletePage.pageHandler
+                   , dir "addpredicatepage" AddPredicatePage.pageHandler
                    , methodSP GET pageHandlerGet
                    , methodSP POST pageHandlerPost
                    ]
@@ -48,6 +54,8 @@ getPage = do
         H.div ! A.id "buttonBar" $ do
             H.button ! A.id "editButton" $ "Edit"
             H.button ! A.id "addButton" $ "Add"
+            H.button ! A.id "delButton" $ "Delete"
+            H.button ! A.id "addPredButton" $ "Add Predicate"
         H.h1 $ fromString title
         preEscapedString text
         return ()

@@ -32,6 +32,9 @@ Executable p117
                     P117.DBAccess
                     P117.MainPage.AddPage
                     P117.MainPage.EditPage
+                    P117.MainPage.CopyPage
+                    P117.MainPage.DeletePage
+                    P117.MainPage.AddPredicatePage
                     P117.Types
     Hs-Source-Dirs: src
     Ghc-Options:    -threaded -Wall -fno-warn-unused-do-bind

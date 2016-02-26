@@ -14,9 +14,10 @@ div#pageText {
     /*border: solid 1px;*/
 }
 
-
-ul.dynatree-container span:not(.dynatree-active) a:focus
+ul.dynatree-container a:focus:not(:active)
 {
-	background: none !important;
+	background: none;
 	outline: none !important;
 }
+
+
