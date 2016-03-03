@@ -21,7 +21,7 @@ pageHandler = msum [ methodSP POST pageHandlerPost
                    ]
 
 structuredErr :: String -> String
-structuredErr e = encode ("error" :: String, e)
+structuredErr e = encode e
 
 getParents :: IConnection conn => conn -> Int -> Int -> (ErrorT String IO) [Int]
 getParents conn predicateId pageId = do
