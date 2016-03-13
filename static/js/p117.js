@@ -306,7 +306,7 @@ $(document).ready(function () {
         var url2 = setUrlParameter(url1, "DisplayMode" + n, v);
         var url3 = (v === 'custom') ?
                 setUrlParameter(url2, "CustomPredicate"+n, newPredicate) :
-                removeUrlParameter(url2, "CustomPredicate" + n);
+                url2;
         window.location.search = url3;
     }
 
