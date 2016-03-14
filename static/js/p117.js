@@ -161,8 +161,9 @@ $(document).ready(function () {
                 success: function (ans) {
                     if (ans[0] == "ok") {
                         var pageId = ans[1];
-                        $('#tree1').dynatree("getTree").reload();
-                        $('#tree2').dynatree("getTree").reload();
+                        var path = (selectedNode && displayMode === 'custom') ? getPathForNode(selectedNode) + ';' + pageId : pageId;
+                        req["Path" + ltree] = path;
+                        window.location.search = ArrayToURL(req);
                     }
                     else
                     {

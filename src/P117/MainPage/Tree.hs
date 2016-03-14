@@ -7,7 +7,7 @@ import Control.Monad.Error
 
 
 
-
+import Data.List (intercalate)
 import Data.Tree
 import Database.HDBC
 
@@ -88,14 +88,15 @@ treeToHtml predicateId branches = do
 -}
 
 treeToJSON :: [Tree TreeItem] -> JSValue
-treeToJSON branches = JSArray $ map treeToJSON' branches
+treeToJSON branches = JSArray $ map (treeToJSON' []) branches
     where
-    treeToJSON' :: Tree TreeItem -> JSValue
-    treeToJSON' (Node item children) =
+    treeToJSON' :: [String] -> Tree TreeItem -> JSValue
+    treeToJSON' path (Node item children) = let path' = path ++ [show $ tiPageId item] in
         makeObj
             [ ("title", JSString $ toJSString $ tiTitle item)
+            , ("key", JSString $ toJSString $ intercalate "_" path')
             , ("pageId", JSString $ toJSString $ show $ tiPageId item)
-            , ("children", JSArray $ map treeToJSON' children)
+            , ("children", JSArray $ map (treeToJSON' path') children)
             ]
 
 testForest :: Forest TreeItem
