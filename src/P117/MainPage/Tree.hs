@@ -162,7 +162,7 @@ getTreeForPredicate predicateId = do
                 convRow [titleR] = fromSql titleR
             let rootTitle = convRow $ head r
             -- 2. Получаем список дочерних страниц
-            r <- liftIO $ quickQuery' conn "SELECT value2 FROM binaryTrue where binaryId == ? and value1 == ? ORDER BY value2" [toSql predicateId, toSql rootId]
+            r <- liftIO $ quickQuery' conn "SELECT value2 FROM binaryTrue where binaryId == ? and value1 == ? ORDER BY pos, value2" [toSql predicateId, toSql rootId]
             let convRow :: [SqlValue] -> Integer
                 convRow [idR] = fromSql idR :: Integer
             let childrenId = map convRow r
