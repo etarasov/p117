@@ -13,21 +13,22 @@ CREATE TABLE binaryTrue (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 binaryId INTEGER,
 value1 TEXT,
-value2 TEXT );
-INSERT INTO "binaryTrue" VALUES(1,1,'-1','1');
-INSERT INTO "binaryTrue" VALUES(2,1,'-1','2');
-INSERT INTO "binaryTrue" VALUES(10,1,'-1','10');
-INSERT INTO "binaryTrue" VALUES(14,1,'10','8');
-INSERT INTO "binaryTrue" VALUES(15,1,'10','12');
-INSERT INTO "binaryTrue" VALUES(16,1,'10','13');
-INSERT INTO "binaryTrue" VALUES(17,1,'12','14');
-INSERT INTO "binaryTrue" VALUES(18,1,'10','14');
-INSERT INTO "binaryTrue" VALUES(19,2,'-1','2');
-INSERT INTO "binaryTrue" VALUES(20,2,'-1','4');
-INSERT INTO "binaryTrue" VALUES(21,3,'-1','4');
-INSERT INTO "binaryTrue" VALUES(22,3,'-1','15');
-INSERT INTO "binaryTrue" VALUES(23,3,'-1','16');
-INSERT INTO "binaryTrue" VALUES(24,1,'10','17');
+value2 TEXT,
+pos INTEGER DEFAULT -1);
+INSERT INTO "binaryTrue" VALUES(1,1,'-1','1', -1);
+INSERT INTO "binaryTrue" VALUES(2,1,'-1','2', -1);
+INSERT INTO "binaryTrue" VALUES(10,1,'-1','10', -1);
+INSERT INTO "binaryTrue" VALUES(14,1,'10','8', -1);
+INSERT INTO "binaryTrue" VALUES(15,1,'10','12', -1);
+INSERT INTO "binaryTrue" VALUES(16,1,'10','13', -1);
+INSERT INTO "binaryTrue" VALUES(17,1,'12','14', -1);
+INSERT INTO "binaryTrue" VALUES(18,1,'10','14', -1);
+INSERT INTO "binaryTrue" VALUES(19,2,'-1','2', -1);
+INSERT INTO "binaryTrue" VALUES(20,2,'-1','4', -1);
+INSERT INTO "binaryTrue" VALUES(21,3,'-1','4', -1);
+INSERT INTO "binaryTrue" VALUES(22,3,'-1','15', -1);
+INSERT INTO "binaryTrue" VALUES(23,3,'-1','16', -1);
+INSERT INTO "binaryTrue" VALUES(24,1,'10','17', -1);
 CREATE TABLE pages (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title text,

@@ -86,7 +86,8 @@ $(document).ready(function () {
     function editButtonHandler () {
         var selectedItemId = $('#pageText').data('page-id');
 
-        function submitPage () {
+        function submitPage (e) {
+            e.preventDefault();
             var str = $("#editForm").serialize();
             // Save 'title' field to change it in tree
             var titleParam = $('#editForm > input[name="title"]').serializeArray();
@@ -121,6 +122,7 @@ $(document).ready(function () {
                 $('#pageText').html(ans);
                 $('#previewButton').button();
                 $('#submitButton').button().click(submitPage);
+                $('#editForm').submit(submitPage);
             }
         });
     };
@@ -145,7 +147,8 @@ $(document).ready(function () {
             }
         }
 
-        function submitPage () {
+        function submitPage (e) {
+            e.preventDefault();
             var str = $("#addForm").serialize();
 
             str = str + "&submit=Submit&pageId="+selectedItemId+"&predicateId="+predicateId+"&parentId="+selectedNodeParentPageId+"&displayMode="+displayMode;
@@ -158,8 +161,9 @@ $(document).ready(function () {
                 success: function (ans) {
                     if (ans[0] == "ok") {
                         var pageId = ans[1];
-                        $('#tree1').dynatree("getTree").reload();
-                        $('#tree2').dynatree("getTree").reload();
+                        var path = (selectedNode && displayMode === 'custom') ? getPathForNode(selectedNode) + ';' + pageId : pageId;
+                        req["Path" + ltree] = path;
+                        window.location.search = ArrayToURL(req);
                     }
                     else
                     {
@@ -179,6 +183,7 @@ $(document).ready(function () {
                 $("#pageText").html(ans);
                 $('#previewButton').button();
                 $('#submitButton').button().click(submitPage);
+                $('#addForm').submit(submitPage);
             }
         });
     };
@@ -201,7 +206,8 @@ $(document).ready(function () {
             selectedNodeParentPageId = selectedNodeParent.data.pageId;
         }
 
-        function submitAddPred () {
+        function submitDelItem (e) {
+            e.preventDefault();
             var mode = $('#delForm > *[name="mode"]').val();
             var str = "&submit=Submit&pageId="+selectedItemId+"&parentId="+selectedNodeParentPageId+"&mode="+mode;
             $.ajax({
@@ -233,7 +239,8 @@ $(document).ready(function () {
         $('#cancelButton').button().click(function() {
             displaySelectedPage(selectedItemId);
         });
-        $('#submitButton').button().click(submitAddPred);
+        $('#submitButton').button().click(submitDelItem);
+        $('#delForm').submit(submitDelItem);
     }
 
     function addPredButtonHandler () {
@@ -243,7 +250,8 @@ $(document).ready(function () {
         var selectedNode = $('#tree'+ltree).dynatree('getTree').getActiveNode();
         var selectedItemId = selectedNode ? selectedNode.data.pageId : null;
 
-        function submitAddPred () {
+        function submitAddPred (e) {
+            e.preventDefault();
             var title = $('#addPredForm > *[name="title"]').val();
             var str = "submit=Submit&title="+ encodeURIComponent(title);
             $.ajax({
@@ -299,7 +307,7 @@ $(document).ready(function () {
         var url2 = setUrlParameter(url1, "DisplayMode" + n, v);
         var url3 = (v === 'custom') ?
                 setUrlParameter(url2, "CustomPredicate"+n, newPredicate) :
-                removeUrlParameter(url2, "CustomPredicate" + n);
+                url2;
         window.location.search = url3;
     }
 
@@ -332,12 +340,12 @@ $(document).ready(function () {
             dataType: "json",
             error: ajaxError,
             success: function (ans) {
-                if(ans && ans[0] === 'error') {
-                    alert("Error: " + ans[1]);
-                }
-                else {
+                if(ans && ans[0] === 'ok') {
                     sourceNode.tree.reload();
                     targetNode.tree.reload();
+                }
+                else {
+                    alert("Error: " + ans);
                 }
             }
         });

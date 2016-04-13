@@ -7,7 +7,7 @@ import Control.Monad.Error
 
 
 
-
+import Data.List (intercalate)
 import Data.Tree
 import Database.HDBC
 
@@ -88,14 +88,15 @@ treeToHtml predicateId branches = do
 -}
 
 treeToJSON :: [Tree TreeItem] -> JSValue
-treeToJSON branches = JSArray $ map treeToJSON' branches
+treeToJSON branches = JSArray $ map (treeToJSON' []) branches
     where
-    treeToJSON' :: Tree TreeItem -> JSValue
-    treeToJSON' (Node item children) =
+    treeToJSON' :: [String] -> Tree TreeItem -> JSValue
+    treeToJSON' path (Node item children) = let path' = path ++ [show $ tiPageId item] in
         makeObj
             [ ("title", JSString $ toJSString $ tiTitle item)
+            , ("key", JSString $ toJSString $ intercalate "_" path')
             , ("pageId", JSString $ toJSString $ show $ tiPageId item)
-            , ("children", JSArray $ map treeToJSON' children)
+            , ("children", JSArray $ map (treeToJSON' path') children)
             ]
 
 testForest :: Forest TreeItem
@@ -161,7 +162,7 @@ getTreeForPredicate predicateId = do
                 convRow [titleR] = fromSql titleR
             let rootTitle = convRow $ head r
             -- 2. Получаем список дочерних страниц
-            r <- liftIO $ quickQuery' conn "SELECT value2 FROM binaryTrue where binaryId == ? and value1 == ? ORDER BY value2" [toSql predicateId, toSql rootId]
+            r <- liftIO $ quickQuery' conn "SELECT value2 FROM binaryTrue where binaryId == ? and value1 == ? ORDER BY pos, value2" [toSql predicateId, toSql rootId]
             let convRow :: [SqlValue] -> Integer
                 convRow [idR] = fromSql idR :: Integer
             let childrenId = map convRow r
